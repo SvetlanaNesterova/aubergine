@@ -5,3 +5,9 @@
 /.vs/Aubergine/v15
 /Application/obj/Debug
 /Aubergine/obj/Debug
+/.vs
+/Application/.vs/Application/v15
+/Application/obj/Release/Application.csproj.CoreCompileInputs.cache
+/Aubergine/.vs/Aubergine/v15/Server/sqlite3
+/Aubergine/.vs/Aubergine/v15
+/Aubergine/obj/Release
