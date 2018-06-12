@@ -22,12 +22,22 @@ namespace Aubergine.realisation
 
         }
 
-        public override void Do()
+        public void Do()
         {
             throw new NotImplementedException();
         }
 
-        public override bool IsAvailiable()
+        public bool IsAvailiable()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Do(Hero first, Hero second)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool IsAvailiable(Hero first, Hero second)
         {
             throw new NotImplementedException();
         }

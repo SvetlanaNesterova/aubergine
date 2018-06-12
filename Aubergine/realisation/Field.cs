@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Aubergine.realisation;
 
 namespace Aubergine
 {
@@ -15,17 +16,22 @@ namespace Aubergine
 
         public bool Exist => throw new NotImplementedException();
 
+        public void Happen(Interaction<IGameObject, IGameObject> event_)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Tick()
         {
             foreach(var obj in Objects)
             {
-                obj.
+                obj.Position = new Position();
             }
         }
 
         public bool TryMove(IGameObject gObject, IPosition position)
         {
-            
+            return true;
         }
 
 

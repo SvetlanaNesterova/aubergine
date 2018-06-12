@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Aubergine;
 
-namespace Application
+namespace Game
 {
-    class Program
+    class Position : IPosition
     {
-        static void Main(string[] args)
-        {
-        }
+        public Point Coords { get; set; }
     }
 }

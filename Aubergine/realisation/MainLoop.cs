@@ -21,7 +21,7 @@ namespace Aubergine.realisation
             {
                 var hero1 = new Hero();
                 var hero2 = new Hero();
-                space.Happen(new Kill(hero1, hero2));
+                //space.Happen(new Kill(hero1, hero2));
 
                 space.Tick();
 

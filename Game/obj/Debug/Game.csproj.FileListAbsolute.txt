@@ -1,0 +1,12 @@
+C:\Users\Александр\source\repos\aubergine\Game\bin\Debug\Game.exe.config
+C:\Users\Александр\source\repos\aubergine\Game\bin\Debug\Game.exe
+C:\Users\Александр\source\repos\aubergine\Game\bin\Debug\Game.pdb
+C:\Users\Александр\source\repos\aubergine\Game\obj\Debug\Game.csprojAssemblyReference.cache
+C:\Users\Александр\source\repos\aubergine\Game\obj\Debug\Game.Properties.Resources.resources
+C:\Users\Александр\source\repos\aubergine\Game\obj\Debug\Game.csproj.GenerateResource.cache
+C:\Users\Александр\source\repos\aubergine\Game\obj\Debug\Game.csproj.CoreCompileInputs.cache
+C:\Users\Александр\source\repos\aubergine\Game\obj\Debug\Game.exe
+C:\Users\Александр\source\repos\aubergine\Game\obj\Debug\Game.pdb
+C:\Users\Александр\source\repos\aubergine\Game\bin\Debug\Aubergine.dll
+C:\Users\Александр\source\repos\aubergine\Game\bin\Debug\Aubergine.pdb
+C:\Users\Александр\source\repos\aubergine\Game\obj\Debug\Game.csproj.CopyComplete
