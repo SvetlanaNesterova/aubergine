@@ -6,4 +6,8 @@ using System.Threading.Tasks;
 
 namespace Aubergine
 {
+    public interface IGameObject
+    {
+        IPosition Position { get; set; }
+    }
 }
