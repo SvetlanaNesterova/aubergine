@@ -49,7 +49,6 @@
     <Compile Include="realisation\MainLoop.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="realisation\Hero.cs" />
-    <Compile Include="realisation\Position.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

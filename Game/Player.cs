@@ -10,9 +10,9 @@ namespace Game
 {
     class Player : IGameObject
     {
-        public IPosition Position { get; set; }
+        public Position Position { get; set; }
 
-        public Player(IPosition pos)
+        public Player(Position pos)
         {
             Position = pos;
         }

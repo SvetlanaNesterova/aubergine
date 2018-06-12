@@ -14,6 +14,6 @@ namespace Game
             Position = position;
         }
 
-        public IPosition Position { get; set; }
+        public Position Position { get; set; }
     }
 }

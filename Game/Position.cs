@@ -8,8 +8,8 @@ using Aubergine;
 
 namespace Game
 {
-    class Position : IPosition
-    {
-        public Point Coords { get; set; }
-    }
+    //class Position : IPosition<>
+    //{
+    //    public Point Coords { get; set; }
+    //}
 }

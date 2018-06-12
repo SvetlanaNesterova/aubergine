@@ -9,7 +9,7 @@ namespace Aubergine
 {
     class Field : ISpace
     {
-        List<IGameObject> Objects;
+        List<IGameObject> Objects = new List<IGameObject>();
         public Field()
         {
         }
@@ -29,7 +29,7 @@ namespace Aubergine
             }
         }
 
-        public bool TryMove(IGameObject gObject, IPosition position)
+        public bool TryMove(IGameObject gObject, Position position)
         {
             return true;
         }

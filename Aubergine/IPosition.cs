@@ -7,8 +7,16 @@ using System.Threading.Tasks;
 
 namespace Aubergine
 {
-    public interface IPosition
+    public class Position
     {
-        Point Coords { get; set; }
+        public Point Coords;
+
+        public bool IsIntersectedWith(Position a)
+        {
+            var p = a as Position;
+            if (p != null)
+                return Coords == p.Coords;
+            return false; 
+        }
     }
 }
