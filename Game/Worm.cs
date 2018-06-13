@@ -7,13 +7,11 @@ using Aubergine;
 
 namespace Game
 {
-    class Worm : IGameObject
+    class Worm : GameObject
     {
         public Worm(Position position)
         {
             Position = position;
         }
-
-        public Position Position { get; set; }
     }
 }

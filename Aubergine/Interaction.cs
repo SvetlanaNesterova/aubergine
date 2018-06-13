@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Aubergine
 {
     public abstract class Interaction<TSubject, TObject> 
-        where TSubject : IGameObject 
+        where TSubject : GameObject 
     {
         public abstract void Do();
         public abstract bool IsAvailiable();

@@ -8,12 +8,11 @@ using Aubergine;
 
 namespace Game
 {
-    class Game : ISpace
+    class Game : Space
     {
-        public List<IGameObject> objects;
         public Game()
         {
-            objects = new List<IGameObject>
+            objects = new List<GameObject>
             {
                 new Player(new Position() {Coords = new Point(450,200)}),
                 new Worm(new Position() {Coords = new Point(100, 100)}),
@@ -23,31 +22,25 @@ namespace Game
             };
         }
 
-        public bool Exist { get; }
-        public void Happen(Interaction<IGameObject, IGameObject> event_)
+        public override bool Exist { get; }
+        public override void Happen(Interaction<GameObject, GameObject> event_)
         {
             throw new NotImplementedException();
         }
 
-        public void Tick()
+        public override void Tick()
         {
             //throw new NotImplementedException();
         }
 
-        public void moveObjects(Direction direction)
+        public void MoveObjects(Direction direction)
         {
             foreach (var obj in objects)
             {
                 if (obj is Player) continue;
-                if (direction == Direction.Up)
-                    obj.Position.Coords = new Point(obj.Position.Coords.X, obj.Position.Coords.Y + 5);
-                if (direction == Direction.Down)
-                    obj.Position.Coords = new Point(obj.Position.Coords.X, obj.Position.Coords.Y - 5);
-                if (direction == Direction.Right)
-                    obj.Position.Coords = new Point(obj.Position.Coords.X - 5, obj.Position.Coords.Y);
-                if (direction == Direction.Left)
-                    obj.Position.Coords = new Point(obj.Position.Coords.X + 5, obj.Position.Coords.Y);
+                obj.MoveInDirection(direction, 5);
             }
         }
+
     }
 }

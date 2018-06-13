@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Aubergine;
+using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
+
 
 namespace Game
 {
@@ -38,7 +36,7 @@ namespace Game
             PaintEventHandler drawingField = (sender, args) =>
             {
                 foreach (var obj in game.objects)
-                {
+               {
                     var imgPath = defaultImg;
 
                     if (obj is Player)
@@ -69,23 +67,33 @@ namespace Game
 
         private void DoMoving(Game game)
         {
-            //var player = (Player) game.objects[0];
-            //if (isUp) player.GoUp();
-            //if (isDown) player.GoDown();
-            //if (isL) player.GoL();
-            //if (isR) player.GoR();
-            if (isUp) game.moveObjects(Direction.Up);
-            if (isDown) game.moveObjects(Direction.Down);
-            if (isL)
+            var player = (Player)game.objects[0];
+            var direction = Direction.None;
+            var distance = 5;
+            
+            if (isUp)
             {
-                game.moveObjects(Direction.Left);
+                direction = Direction.Down;
+            }
+            else if (isDown)
+            {
+                direction = Direction.Up;
+            }
+            else if (isL)
+            {
+                direction = Direction.Left;
                 playerImg = playerLImg;
             }
-
-            if (isR)
+            else if (isR)
             {
-                game.moveObjects(Direction.Right);
+                direction = Direction.Right;
                 playerImg = playerRImg;
+            }
+
+            if (direction != Direction.None)
+            {
+                player.MoveInDirection(direction, distance);
+                game.MoveCameraView(direction, -distance);
             }
         }
 
@@ -113,11 +121,5 @@ namespace Game
                 isDown = true;
         }
     }
-    enum Direction
-    {
-        Up,
-        Down,
-        Right,
-        Left
-    }
+
 }
