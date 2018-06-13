@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Direction.cs" />
+    <Compile Include="GameObjectFactory.cs" />
     <Compile Include="Interaction.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="MovingObject.cs" />

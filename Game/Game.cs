@@ -10,17 +10,27 @@ namespace Game
 {
     class Game : Space
     {
-        /*
-        class Health : IParameter<int> { }
-        class Mana : IParameter<int> { }
-        class NutritionalValue : IParameter<int> { }
-        class Apple : IParametrizedGameObject { }
-        class Hero : IParametrizedGameObject { }
+        class Health : Parameter<int> { }
+        class Mana : Parameter<double> { }
+        class NutritionalValue : Parameter<int> { }
+        class Apple : ParametrizedGameObject { }
+        class Hero : ParametrizedGameObject { }
 
-        With<Pararmeter<T>>(T min, T max, T current) where T: IComparable
-        */
+
+        //With<Pararmeter<T>>(T min, T max, T current) where T: IComparable
+
         public Game()
         {
+            var c = GameObjectFactory
+                .GetParametrizedCharacter<Hero>()
+                .WithParameter<int, Health>(50, 1, 100);
+
+            var c1 = c.Create();
+                
+            var c2 = c
+                .WithParameter<double, Mana>(100, 1, 100)
+                .Create();
+            c2.Set<int,Health>(9);
             /*
             var hero = Factory
                 .GetParametrizedCharacter<Hero>()
@@ -56,7 +66,7 @@ namespace Game
                 .WithParameter<Health>(1, 100, 50)
                 .WithParameter<Mana>(1, 100, 100);
 
-            c.Get<Health>();
+            worm.Get<Health>();
             c.Set<Health>();
 
             */
