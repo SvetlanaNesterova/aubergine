@@ -12,8 +12,9 @@ namespace Game
     class MyForm : Form
     {
         private static string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "image");
-        private static Image playerLImg = Image.FromFile(Path.Combine(path, "playerL.png"));
-        private static Image playerRImg = Image.FromFile(Path.Combine(path, "playerR.png"));
+        private static Image playerLImg = Image.FromFile(Path.Combine(path, "birdL.png"));
+        private static Image playerRImg = Image.FromFile(Path.Combine(path, "birdR.png"));
+        private static Image playerStaticImg = Image.FromFile(Path.Combine(path, "bird.png"));
         private static Image wormImg = Image.FromFile(Path.Combine(path, "worm.png"));
         private static Image defaultImg = Image.FromFile(Path.Combine(path, "default.png"));
 
@@ -30,7 +31,7 @@ namespace Game
         {
             DoubleBuffered = true;
             ClientSize = new Size(1000, 500);
-            BackColor = Color.Aqua;
+            BackColor = Color.SkyBlue;
             //BackgroundImage = Image.FromFile(Path.Combine(path, "water.png"));
 
             var game = new Game();
@@ -76,6 +77,7 @@ namespace Game
             //if (isR) player.GoR();
             if (isUp) game.moveObjects(Direction.Up);
             if (isDown) game.moveObjects(Direction.Down);
+            playerImg = playerStaticImg;
             if (isL)
             {
                 game.moveObjects(Direction.Left);
