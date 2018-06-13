@@ -8,18 +8,11 @@ using Aubergine;
 
 namespace Game
 {
-    class Player : IGameObject
+    class Player : GameObject
     {
-        public Position Position { get; set; }
-
         public Player(Position pos)
         {
             Position = pos;
         }
-        
-        public void GoUp() { Position.Coords = new Point(Position.Coords.X, Position.Coords.Y - 5);}
-        public void GoDown() { Position.Coords = new Point(Position.Coords.X, Position.Coords.Y + 5); }
-        public void GoL() { Position.Coords = new Point(Position.Coords.X - 5, Position.Coords.Y); }
-        public void GoR() { Position.Coords = new Point(Position.Coords.X + 5, Position.Coords.Y); }
     }
 }

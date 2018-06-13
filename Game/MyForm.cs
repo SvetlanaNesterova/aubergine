@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Aubergine;
+using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
+
 
 namespace Game
 {
     class MyForm : Form
     {
         private static string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "image");
-        private static Image playerLImg = Image.FromFile(Path.Combine(path, "birdL.png"));
-        private static Image playerRImg = Image.FromFile(Path.Combine(path, "birdR.png"));
-        private static Image playerStaticImg = Image.FromFile(Path.Combine(path, "bird.png"));
+        private static Image playerLImg = Image.FromFile(Path.Combine(path, "playerL.png"));
+        private static Image playerRImg = Image.FromFile(Path.Combine(path, "playerR.png"));
         private static Image wormImg = Image.FromFile(Path.Combine(path, "worm.png"));
         private static Image defaultImg = Image.FromFile(Path.Combine(path, "default.png"));
 
@@ -31,7 +28,7 @@ namespace Game
         {
             DoubleBuffered = true;
             ClientSize = new Size(1000, 500);
-            BackColor = Color.SkyBlue;
+            BackColor = Color.Aqua;
             //BackgroundImage = Image.FromFile(Path.Combine(path, "water.png"));
 
             var game = new Game();
@@ -39,7 +36,7 @@ namespace Game
             PaintEventHandler drawingField = (sender, args) =>
             {
                 foreach (var obj in game.objects)
-                {
+               {
                     var imgPath = defaultImg;
 
                     if (obj is Player)
@@ -57,7 +54,7 @@ namespace Game
             KeyUp += MyForm_KeyUp;
 
             var time = 0;
-            var timer = new Timer {Interval = 5};
+            var timer = new Timer {Interval = 5 };
             timer.Tick += (sender, args) =>
             {
                 time++;
@@ -70,24 +67,33 @@ namespace Game
 
         private void DoMoving(Game game)
         {
-            //var player = (Player) game.objects[0];
-            //if (isUp) player.GoUp();
-            //if (isDown) player.GoDown();
-            //if (isL) player.GoL();
-            //if (isR) player.GoR();
-            if (isUp) game.moveObjects(Direction.Up);
-            if (isDown) game.moveObjects(Direction.Down);
-            playerImg = playerStaticImg;
-            if (isL)
+            var player = (Player)game.objects[0];
+            var direction = Direction.None;
+            var distance = 5;
+            
+            if (isUp)
             {
-                game.moveObjects(Direction.Left);
+                direction = Direction.Down;
+            }
+            else if (isDown)
+            {
+                direction = Direction.Up;
+            }
+            else if (isL)
+            {
+                direction = Direction.Left;
                 playerImg = playerLImg;
             }
-
-            if (isR)
+            else if (isR)
             {
-                game.moveObjects(Direction.Right);
+                direction = Direction.Right;
                 playerImg = playerRImg;
+            }
+
+            if (direction != Direction.None)
+            {
+                player.MoveInDirection(direction, distance);
+                game.MoveCameraView(direction, -distance);
             }
         }
 
@@ -114,12 +120,5 @@ namespace Game
             if (e.KeyCode == Keys.S)
                 isDown = true;
         }
-    }
-    enum Direction
-    {
-        Up,
-        Down,
-        Right,
-        Left
     }
 }
