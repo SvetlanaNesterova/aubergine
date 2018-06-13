@@ -54,7 +54,7 @@ namespace Game
             KeyUp += MyForm_KeyUp;
 
             var time = 0;
-            var timer = new Timer {Interval = 5};
+            var timer = new Timer {Interval = 5 };
             timer.Tick += (sender, args) =>
             {
                 time++;
@@ -121,5 +121,4 @@ namespace Game
                 isDown = true;
         }
     }
-
 }

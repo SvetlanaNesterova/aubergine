@@ -12,7 +12,12 @@ namespace Aubergine
 
         public abstract void Happen(Interaction<GameObject, GameObject> event_);
 
-        public abstract void Tick();
+        public void Tick()
+        {
+            // проверить все пересечения, произвести действия
+
+            throw new NotImplementedException();
+        }
 
         public List<GameObject> objects;
 
@@ -29,7 +34,45 @@ namespace Aubergine
                 obj.Position.MoveDirection(direction, distance);
             }
         }
+
+        private Dictionary<Type, Dictionary<Type, Action<GameObject, GameObject>>> intersectionActions =
+            new Dictionary<Type, Dictionary<Type, Action<GameObject, GameObject>>>();
+
+        public void SetIntersection<TFirst, TSecond>(Action<TFirst, TSecond> action)
+            where TFirst : GameObject
+            where TSecond : GameObject
+        {
+            AddToDictionary(typeof(TFirst), typeof(TSecond), (Action<GameObject, GameObject>)action);
+            AddToDictionary(typeof(TSecond), typeof(TFirst), (Action<GameObject, GameObject>)action);
+        }
+
+        private void AddToDictionary(Type first, Type second, Action<GameObject, GameObject> action)
+        {
+            if (!intersectionActions.ContainsKey(first))
+                intersectionActions[first] = new Dictionary<Type, Action<GameObject, GameObject>>();
+            intersectionActions[first][second] = action;
+        }
+
+        public Action<TFirst, TSecond> GetIntersection<TFirst, TSecond>()
+            where TFirst : GameObject
+            where TSecond : GameObject
+        {
+            var first = typeof(TFirst);
+            var second = typeof(TSecond);
+            if (intersectionActions.ContainsKey(first))
+                if (intersectionActions[first].ContainsKey(second))
+                    return intersectionActions[first][second];
+            if (intersectionActions.ContainsKey(second))
+                if (intersectionActions[second].ContainsKey(first))
+                    return intersectionActions[second][first];
+            return null;
+        }
     }
+    /*
+    public interface Action<in T1, in T2>
+    {
+
+    }*/
 }
 
 /*
