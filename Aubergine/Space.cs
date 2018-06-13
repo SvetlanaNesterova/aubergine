@@ -16,7 +16,7 @@ namespace Aubergine
         {
             // проверить все пересечения, произвести действия
 
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public List<GameObject> objects;

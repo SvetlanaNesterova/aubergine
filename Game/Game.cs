@@ -27,12 +27,7 @@ namespace Game
         {
             throw new NotImplementedException();
         }
-
-        public override void Tick()
-        {
-            //throw new NotImplementedException();
-        }
-
+        
         public void MoveObjects(Direction direction)
         {
             foreach (var obj in objects)
