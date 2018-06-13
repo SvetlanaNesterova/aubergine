@@ -74,24 +74,26 @@ namespace Game
             if (isUp)
             {
                 direction = Direction.Down;
+                player.MoveInDirection(direction, distance);
+                game.MoveCameraView(direction, -distance);
             }
-            else if (isDown)
+            if (isDown)
             {
                 direction = Direction.Up;
+                player.MoveInDirection(direction, distance);
+                game.MoveCameraView(direction, -distance);
             }
-            else if (isL)
+            if (isL)
             {
-                direction = Direction.Left;
                 playerImg = playerLImg;
+                direction = Direction.Left;
+                player.MoveInDirection(direction, distance);
+                game.MoveCameraView(direction, -distance);
             }
-            else if (isR)
+            if (isR)
             {
-                direction = Direction.Right;
                 playerImg = playerRImg;
-            }
-
-            if (direction != Direction.None)
-            {
+                direction = Direction.Right;
                 player.MoveInDirection(direction, distance);
                 game.MoveCameraView(direction, -distance);
             }
