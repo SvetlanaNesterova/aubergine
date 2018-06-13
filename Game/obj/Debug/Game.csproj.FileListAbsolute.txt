@@ -10,3 +10,15 @@ C:\Users\Александр\source\repos\aubergine\Game\obj\Debug\Game.pdb
 C:\Users\Александр\source\repos\aubergine\Game\bin\Debug\Aubergine.dll
 C:\Users\Александр\source\repos\aubergine\Game\bin\Debug\Aubergine.pdb
 C:\Users\Александр\source\repos\aubergine\Game\obj\Debug\Game.csproj.CopyComplete
+D:\Светлана\source\repos\AuberEngine\Aubergine\Game\bin\Debug\Game.exe.config
+D:\Светлана\source\repos\AuberEngine\Aubergine\Game\bin\Debug\Game.exe
+D:\Светлана\source\repos\AuberEngine\Aubergine\Game\bin\Debug\Game.pdb
+D:\Светлана\source\repos\AuberEngine\Aubergine\Game\bin\Debug\Aubergine.dll
+D:\Светлана\source\repos\AuberEngine\Aubergine\Game\bin\Debug\Aubergine.pdb
+D:\Светлана\source\repos\AuberEngine\Aubergine\Game\obj\Debug\Game.csprojResolveAssemblyReference.cache
+D:\Светлана\source\repos\AuberEngine\Aubergine\Game\obj\Debug\Game.Properties.Resources.resources
+D:\Светлана\source\repos\AuberEngine\Aubergine\Game\obj\Debug\Game.csproj.GenerateResource.cache
+D:\Светлана\source\repos\AuberEngine\Aubergine\Game\obj\Debug\Game.csproj.CoreCompileInputs.cache
+D:\Светлана\source\repos\AuberEngine\Aubergine\Game\obj\Debug\Game.csproj.CopyComplete
+D:\Светлана\source\repos\AuberEngine\Aubergine\Game\obj\Debug\Game.exe
+D:\Светлана\source\repos\AuberEngine\Aubergine\Game\obj\Debug\Game.pdb

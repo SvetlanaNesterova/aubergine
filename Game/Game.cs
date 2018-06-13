@@ -10,8 +10,56 @@ namespace Game
 {
     class Game : Space
     {
+        /*
+        class Health : IParameter<int> { }
+        class Mana : IParameter<int> { }
+        class NutritionalValue : IParameter<int> { }
+        class Apple : IParametrizedGameObject { }
+        class Hero : IParametrizedGameObject { }
+
+        With<Pararmeter<T>>(T min, T max, T current) where T: IComparable
+        */
         public Game()
         {
+            /*
+            var hero = Factory
+                .GetParametrizedCharacter<Hero>()
+                .OnPos(1, 2)
+                .WithParameter<Health>(1, 100, 50)
+                .WithParameter<Mana>(1, 100, 100)
+                .AddInteraction<Apple>((her, appl) =>
+                    {
+                        her.Set<Health>(her.Get<Health> + appl.Get<Sytnost>);
+                        appl.BeEaten();
+                    })
+                //.AddOnTickAction((her) => { her.Set<Health>(-1) });
+
+            var wormFactory = MetaFactory
+                .GetParametrizedCharacterFactory<Hero>()
+                .WithParameter<Health>(1, 100, 50)
+                .WithParameter<Mana>(1, 100)
+                .AddInteraction<Apple>((her, appl) =>
+                {
+                    her.Set<Health>(her.Get < Health > +appl.Get<NutritionalValue>);
+                    appl.BeEaten();
+                })
+                .AddOnTickAction((her) => { her.Set<Health>(-1) });
+            var worm = wormFactory
+                .OnPos(1, 2)
+                .Set<Health>(50)
+                .Set<Mana>(100)
+                .Create();
+
+            var apple = Factory
+                .GetParametrizedCharacter<Apple>()
+                .OnPos(1, 2)
+                .WithParameter<Health>(1, 100, 50)
+                .WithParameter<Mana>(1, 100, 100);
+
+            c.Get<Health>();
+            c.Set<Health>();
+
+            */
             objects = new List<GameObject>
             {
                 new Player(new Position() {Coords = new Point(450,200)}),
@@ -27,15 +75,5 @@ namespace Game
         {
             throw new NotImplementedException();
         }
-
-        public void MoveObjects(Direction direction)
-        {
-            foreach (var obj in objects)
-            {
-                if (obj is Player) continue;
-                obj.MoveInDirection(direction, 5);
-            }
-        }
-
     }
 }

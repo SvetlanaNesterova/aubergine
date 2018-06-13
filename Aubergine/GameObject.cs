@@ -11,47 +11,6 @@ namespace Aubergine
     {
         public virtual Position Position { get; set; }
 
-        public bool MoveUp(int distance)
-        {
-            // проверка корректности
-            Position.MoveUp(distance);
-            return true;
-        }
-
-        public bool MoveDown(int distance)
-        {
-            // проверка корректности
-            Position.MoveDown(distance);
-            return true;
-        }
-
-        public bool MoveRight(int distance)
-        {
-            // проверка корректности
-            Position.MoveRight(distance);
-            return true;
-        }
-
-        public bool MoveLeft(int distance)
-        {
-            // проверка корректности
-            Position.MoveLeft(distance);
-            return true;
-        }
-
-        public bool MoveOnVector(Point vector)
-        {
-            // проверка корректности
-            Position.MoveRight(vector.X);
-            Position.MoveUp(vector.Y);
-            return true;
-        }
-
-        public bool MoveInDirection(Direction direction, int distance)
-        {
-            // проверка корректности
-            Position.MoveDirection(direction, distance);
-            return true;
-        }
+        
     }
 }

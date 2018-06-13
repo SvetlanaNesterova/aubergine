@@ -8,11 +8,12 @@ using Aubergine;
 
 namespace Game
 {
-    class Player : GameObject
+    class Player : MovingObject
     {
         public Player(Position pos)
         {
             Position = pos;
         }
     }
+
 }
