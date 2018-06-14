@@ -12,9 +12,10 @@ namespace Aubergine
     public abstract class ParametrizedGameObject : GameObject
     {
         private Dictionary<Type, object> parameters;
+        internal Dictionary<Type, Action<GameObject, GameObject>> CollideInteractions = new Dictionary<Type, Action<GameObject, GameObject>>();
 
         public TValue Get<TValue, TName>()
-            where TName : Parameter<TValue>
+            where TName : IParameter<TValue>
             where TValue : IComparable
         {
             // if contains
@@ -22,11 +23,11 @@ namespace Aubergine
             if (parameters.ContainsKey(name))
                 return ((TName)parameters[name]).Value;
             else
-                throw new Exception($"Parameter {name.Name} (FullName: {name.FullName}) was not found.");
+                throw new Exception($"IParameter {name.Name} (FullName: {name.FullName}) was not found.");
         }
         
         public void Set<TValue, TName>(TValue value)
-            where TName : Parameter<TValue>
+            where TName : IParameter<TValue>
             where TValue : IComparable
         {
             // if contains
@@ -40,7 +41,7 @@ namespace Aubergine
         }
     }
 
-    public abstract class Parameter<T> where T: IComparable
+    public abstract class IParameter<T> where T: IComparable
     {
         public T Value { get; set; }
         public T Min { get; set; }
@@ -51,12 +52,12 @@ namespace Aubergine
     public class ParametrizedCharacter<TCharacter> 
         where TCharacter : ParametrizedGameObject , new()
     {
-        private Dictionary<Type, object> parameters = new Dictionary<Type, object>();
+        internal Dictionary<Type, object> parameters { get; } = new Dictionary<Type, object>();
         private Dictionary<Type, Action<GameObject, GameObject>> collideInteractions = new Dictionary<Type, Action<GameObject, GameObject>>();
 
         public ParametrizedCharacter<TCharacter> WithParameter<TValue, TName>(
             TValue current, TValue min, TValue max)
-            where TName : Parameter<TValue>, new()
+            where TName : IParameter<TValue>, new()
             where TValue : IComparable
         {
             Func<TName> parameterCreator = () => new TName() {Value = current, Min = min, Max = max};
@@ -68,6 +69,7 @@ namespace Aubergine
         public TCharacter Create()
         {
             var obj = new TCharacter();
+            obj.CollideInteractions = collideInteractions;
             var d = new Dictionary<Type, object>();
             
             foreach (var parameter in parameters)

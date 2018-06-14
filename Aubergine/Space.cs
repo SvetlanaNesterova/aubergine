@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 
 namespace Aubergine
@@ -32,6 +33,10 @@ namespace Aubergine
             }
             //this.collideInteractions;
             this.objects = objects.ToList();
+            objects
+                .Where(obj => obj is ParametrizedGameObject)
+                .Select(obj => ((ParametrizedGameObject) obj).CollideInteractions)
+                //HERE
 
         }
 
@@ -86,6 +91,14 @@ namespace Aubergine
             if (!collideInteractions.ContainsKey(first))
                 collideInteractions[first] = new Dictionary<Type, object>();
             collideInteractions[first][second] = action;
+        }
+        private void AddToDictionary(
+            Type first, Type second,
+            Action<GameObject, GameObject> action)
+        {
+            if (!collideInteractions.ContainsKey(first))
+                collideInteractions[first] = new Dictionary<Type, object>();
+            collideInteractions[first][second] = new StarndardCollideInteraction(action);
         }
 
         public Action<TFirst, TSecond> GetIntersection<TFirst, TSecond>()

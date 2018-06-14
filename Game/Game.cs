@@ -10,9 +10,9 @@ namespace Game
 {
     class Game
     {
-        class Health : Parameter<int> { }
-        class Mana : Parameter<double> { }
-        class NutritionalValue : Parameter<int> { }
+        class Health : IParameter<int> { }
+        class Mana : IParameter<double> { }
+        class NutritionalValue : IParameter<int> { }
 
         class Apple : ParametrizedGameObject
         {
