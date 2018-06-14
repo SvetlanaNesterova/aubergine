@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Aubergine
 {
-    public interface IInteraction<TSubject, TObject> 
+    public interface IInteraction<in TSubject, in TObject>
         where TSubject : GameObject
         where TObject : GameObject
     {
@@ -14,40 +14,39 @@ namespace Aubergine
         bool IsAvailiable(TSubject subject, TObject obj);
     }
 
-    
-    public interface IConditionalEvent
+    public interface IConditionalEvent<in TObject1, in TObject2>
+       where TObject1 : GameObject
+       where TObject2 : GameObject
     {
-        void Happen();
-        bool ShouldHappenNow();
+        void Happen(TObject1 subject, TObject2 obj);
+        bool ShouldHappenNow(TObject1 subject, TObject2 obj);
     }
-
-    public abstract class CollideInteraction<TSubject, TObject> : IInteraction<TSubject, TObject>
-        where TSubject : GameObject
-        where TObject : GameObject
+    
+    public abstract class CollideInteraction<TObject1, TObject2> : IConditionalEvent<TObject1, TObject2>
+        where TObject1 : GameObject
+        where TObject2 : GameObject
     {
-        public abstract void Do(TSubject subject, TObject obj);
+        public abstract void Happen(TObject1 subject, TObject2 obj);
 
-        public bool IsAvailiable(TSubject subject, TObject obj)
+        public bool ShouldHappenNow(TObject1 subject, TObject2 obj)
         {
             return subject.Position.IsIntersectedWith(obj.Position);
         }
     }
-
     
-
     // private
-    class StarndardCollideInteraction<TSubject, TObject> : CollideInteraction<TSubject, TObject>
-        where TSubject : GameObject
-        where TObject : GameObject
+    class StarndardCollideInteraction<TObject1, TObject2> : CollideInteraction<TObject1, TObject2>
+        where TObject1 : GameObject
+        where TObject2 : GameObject
     {
-        private Action<TSubject, TObject> action;
+        private Action<TObject1, TObject2> action;
 
-        public StarndardCollideInteraction(Action<TSubject,TObject> action)
+        public StarndardCollideInteraction(Action<TObject1,TObject2> action)
         {
             this.action = action;
         }
 
-        public override void Do(TSubject subject, TObject obj)
+        public override void Happen(TObject1 subject, TObject2 obj)
         {
             action.Invoke(subject, obj);
         }
