@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 
 namespace Aubergine
@@ -32,7 +33,13 @@ namespace Aubergine
             }
             //this.collideInteractions;
             this.objects = objects.ToList();
-     
+            var enumerable = objects
+                .Where(obj => obj is ParametrizedGameObject)
+                .OfType<ParametrizedGameObject>();
+
+            foreach (var obj in enumerable)
+                foreach (var dict in obj.CollideInteractions)
+                    AddToDictionary(obj.GetType(), dict.Key, dict.Value);
 
         }
 
@@ -126,6 +133,15 @@ namespace Aubergine
             if (res != null)
                 return new List<ConditionalEventWrapper>() { res };
             return new List<ConditionalEventWrapper>() { };
+        }
+        private void AddToDictionary(
+            Type first, Type second,
+            object action)
+        {
+            if (!collideInteractions.ContainsKey(first))
+                collideInteractions[first] = new Dictionary<Type, object>();
+            // м.б. проблема
+            collideInteractions[first][second] = action;
         }
 
 

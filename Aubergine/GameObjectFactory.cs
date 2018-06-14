@@ -12,6 +12,7 @@ namespace Aubergine
     public abstract class ParametrizedGameObject : GameObject
     {
         private Dictionary<Type, object> parameters;
+        internal Dictionary<Type, object> CollideInteractions = new Dictionary<Type, object>();
 
         public TValue Get<TValue, TName>()
             where TName : IParameter<TValue>
@@ -22,7 +23,7 @@ namespace Aubergine
             if (parameters.ContainsKey(name))
                 return ((TName)parameters[name]).Value;
             else
-                throw new Exception($"Parameter {name.Name} (FullName: {name.FullName}) was not found.");
+                throw new Exception($"IParameter {name.Name} (FullName: {name.FullName}) was not found.");
         }
         
         public void Set<TValue, TName>(TValue value)
@@ -47,6 +48,7 @@ namespace Aubergine
         T Max { get; set; }
     }
     public class Parameter<T> : IParameter<T> where T : IComparable
+    public abstract class IParameter<T> where T: IComparable
     {
         public T Value { get; set; }
         public T Min { get; set; }
@@ -57,8 +59,8 @@ namespace Aubergine
     public class ParametrizedCharacter<TCharacter> 
         where TCharacter : ParametrizedGameObject , new()
     {
-        private Dictionary<Type, object> parameters { get; } = new Dictionary<Type, object>();
-        private Dictionary<Type, Action<GameObject, GameObject>> collideInteractions { get; } = new Dictionary<Type, Action<GameObject, GameObject>>();
+        internal Dictionary<Type, object> parameters { get; } = new Dictionary<Type, object>();
+        private Dictionary<Type, object> collideInteractions = new Dictionary<Type, object>();
 
         public ParametrizedCharacter<TCharacter> WithParameter<TValue, TName>(
             TValue current, TValue min, TValue max)
@@ -71,9 +73,9 @@ namespace Aubergine
             return this;
         }
 
-        public TCharacter Create()
+        public TCharacter CreateOnPosition(Position position)
         {
-            var obj = new TCharacter();
+            var obj = new TCharacter {Position = position, CollideInteractions = collideInteractions};
             var d = new Dictionary<Type, object>();
             
             foreach (var parameter in parameters)
@@ -87,7 +89,8 @@ namespace Aubergine
         public ParametrizedCharacter<TCharacter> AddCollideInteraction<T>(Action<TCharacter, T> action)
             where T : ParametrizedGameObject
         {
-            collideInteractions[typeof(TCharacter)] = (Action<GameObject, GameObject>) action;
+            
+            collideInteractions[typeof(T)] = new StarndardCollideInteraction<TCharacter, T>(action);
             return this;
         }
     }

@@ -10,47 +10,35 @@ namespace Game
 {
     class Game
     {
-        class Health : Parameter<int> { }
-        class Mana : Parameter<double> { }
-        class NutritionalValue : Parameter<int> { }
-
-        class Apple : ParametrizedGameObject
-        {
-            public void Die()
-            {
-                IsOnMap = false;
-            }
-        }
-        class Hero : ParametrizedGameObject { }
-
         private Space world;
-        private Player player;
+        private Hero player;
         public List<GameObject> Objects => world.objects;
-
-        //With<Pararmeter<T>>(T min, T max, T current) where T: IComparable
-
+        
         public Game()
         {
-            #region
 
             var c = GameObjectFactory
                 .GetParametrizedCharacter<Hero>()
-                .WithParameter<int, Health>(50, 1, 100);
-                //.AddCollideInteraction<Apple>((hero, apple) =>
-                //{
-                //    if (hero.Position.IsIntersectedWith(apple.Position))
-                //    {
-                //        hero.Set<int, Health>(hero.Get<int, Health>() + apple.Get<int, NutritionalValue>());
-                //        apple.Die();
-                //    }
-                //});
+                .WithParameter<int, Health>(50, 1, 100)
+                .AddCollideInteraction<Apple>((hero, apple) =>
+                {
+                    hero.Set<int, Health>(hero.Get<int, Health>() + apple.Get<int, NutritionalValue>());
+                    apple.Die();
+                })
+                .CreateOnPosition(new Position(new Point(450, 200), new Size(50, 50)));
 
-            var c1 = c.Create();
+            var a = GameObjectFactory
+                .GetParametrizedCharacter<Apple>()
+                .WithParameter<int, NutritionalValue>(10, 1, 1)
+                .CreateOnPosition(new Position(new Point(100, 100), new Size(20, 20)));
+            world = new Space(new GameObject[] {c, a});
+            player = c;
 
-            var c2 = c
-                .WithParameter<double, Mana>(100, 1, 100)
-                .Create();
-            c2.Set<int, Health>(9);
+            #region ideas
+
+
+
+
             /*
             var hero = Factory
                 .GetParametrizedCharacter<Hero>()
@@ -78,7 +66,7 @@ namespace Game
                 .OnPos(1, 2)
                 .Set<Health>(50)
                 .Set<Mana>(100)
-                .Create();
+                .CreateOnPosition();
 
             var apple = Factory
                 .GetParametrizedCharacter<Apple>()
@@ -90,20 +78,22 @@ namespace Game
             c.Set<Health>();
 
             */
+
             #endregion
-            player = new Player(new Position() { Coords = new Point(450, 200), Size = new Size(50, 50)});
 
-            var objects = new List<GameObject>
-            {
-                player,
-                new Worm(new Position() {Coords = new Point(100, 100), Size = new Size(10, 10) }),
-                new Worm(new Position() {Coords = new Point(900, 100), Size = new Size(10, 10) }),
-                new Worm(new Position() {Coords = new Point(100, 300), Size = new Size(10, 10) }),
-                new Worm(new Position() {Coords = new Point(400, 500), Size = new Size(10, 10) })
-            };
-
-            world = new Space(objects.ToArray());
-            world.AddCollideInteraction(new Eat());
+            //player = new Player(new Position(new Point(450, 200), new Size(50, 50)));
+            //
+            //var objects = new List<GameObject>
+            //{
+            //    player,
+            //    new Worm(new Position(new Point(100, 100), new Size(10, 10))),
+            //    new Worm(new Position(new Point(900, 100), new Size(10, 10))),
+            //    new Worm(new Position(new Point(100, 300), new Size(10, 10))),
+            //    new Worm(new Position(new Point(400, 500), new Size(10, 10)))
+            //};
+            //
+            //world = new Space(objects.ToArray());
+            //world.AddCollideInteraction(new Eat());
         }
 
         public void Tick()
@@ -111,7 +101,7 @@ namespace Game
             world.Tick();
         }
 
-        public Player GetPlayer()
+        public Hero GetPlayer()
         {
             return player;
         }
@@ -119,6 +109,28 @@ namespace Game
         public void MoveCameraView(Direction direction, int distance)
         {
             world.MoveCameraView(direction, distance);
+        }
+    }
+
+    class Health : IParameter<int> { }
+    class Mana : IParameter<double> { }
+    class NutritionalValue : IParameter<int> { }
+
+    class Apple : ParametrizedGameObject
+    {
+        public void Die()
+        {
+            IsOnMap = false;
+        }
+    }
+
+    class Hero : ParametrizedGameObject
+    {
+        public bool MoveInDirection(Direction direction, int distance)
+        {
+            // проверка корректности
+            Position.MoveDirection(direction, distance);
+            return true;
         }
     }
 }

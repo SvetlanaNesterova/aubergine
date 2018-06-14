@@ -13,6 +13,12 @@ namespace Aubergine
         public Size Size { get; set; }
         public Rectangle Body => new Rectangle(Coords, Size);
 
+        public Position(Point point, Size size)
+        {
+            Coords = point;
+            Size = size;
+        }
+
         public bool IsIntersectedWith(Position other)
         {
             return Body.IntersectsWith(other.Body);
@@ -38,7 +44,7 @@ namespace Aubergine
             Coords.Offset(-distance, 0);
         }
 
-        internal void MoveDirection(Direction direction, int distance)
+        public void MoveDirection(Direction direction, int distance)
         {
             var vector = direction.ToVector();
             vector.X = distance * vector.X;
