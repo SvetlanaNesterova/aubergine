@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Aubergine
 {
-    public interface IInteraction<TSubject, TObject> 
+    public interface IInteraction<in TSubject, in TObject> 
         where TSubject : GameObject
         where TObject : GameObject
     {

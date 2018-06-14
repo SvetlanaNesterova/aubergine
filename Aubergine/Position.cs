@@ -11,7 +11,7 @@ namespace Aubergine
     {
         public Point Coords { get; set; }
         public Size Size { get; set; }
-        public Rectangle Body { get => new Rectangle(Coords, Size); }
+        public Rectangle Body => new Rectangle(Coords, Size);
 
         public bool IsIntersectedWith(Position other)
         {

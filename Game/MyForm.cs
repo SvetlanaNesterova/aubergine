@@ -37,15 +37,17 @@ namespace Game
             {
                 foreach (var obj in game.Objects)
                {
-                    var imgPath = defaultImg;
+                    var img = defaultImg;
 
                     if (obj is Player)
-                        imgPath = playerImg;
+                        img = playerImg;
                     if (obj is Worm)
-                        imgPath = wormImg;
+                        img = wormImg;
 
-                    args.Graphics.DrawImage(imgPath, obj.Position.Coords);
-                }
+                   args.Graphics.DrawImage(img, 
+                       obj.Position.Coords.X - 30, obj.Position.Coords.Y - 30,
+                       obj.Position.Size.Width + 30, obj.Position.Size.Height + 30); //obj.Position.Body);
+               }
             };
 
             Paint += drawingField;
