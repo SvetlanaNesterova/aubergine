@@ -8,7 +8,7 @@ using Aubergine;
 
 namespace Game
 {
-    class Game : Space
+    class Game
     {
         class Health : Parameter<int> { }
         class Mana : Parameter<double> { }
@@ -23,11 +23,15 @@ namespace Game
         }
         class Hero : ParametrizedGameObject { }
 
+        private Space world;
+        private Player player;
+        public List<GameObject> Objects => world.objects;
 
         //With<Pararmeter<T>>(T min, T max, T current) where T: IComparable
 
         public Game()
         {
+            #region
             var c = GameObjectFactory
                 .GetParametrizedCharacter<Hero>()
                 .WithParameter<int, Health>(50, 1, 100)
@@ -41,11 +45,11 @@ namespace Game
                 });
 
             var c1 = c.Create();
-                
+
             var c2 = c
                 .WithParameter<double, Mana>(100, 1, 100)
                 .Create();
-            c2.Set<int,Health>(9);
+            c2.Set<int, Health>(9);
             /*
             var hero = Factory
                 .GetParametrizedCharacter<Hero>()
@@ -85,20 +89,35 @@ namespace Game
             c.Set<Health>();
 
             */
-            objects = new List<GameObject>
+            #endregion
+            player = new Player(new Position() { Coords = new Point(450, 200) });
+
+            var objects = new List<GameObject>
             {
-                new Player(new Position() {Coords = new Point(450,200)}),
-                new Worm(new Position() {Coords = new Point(100, 100)}),
-                new Worm(new Position() {Coords = new Point(900, 100)}),
-                new Worm(new Position() {Coords = new Point(100, 300)}),
-                new Worm(new Position() {Coords = new Point(400, 500)})
+                player,
+                new Worm(new Position() {Coords = new Point(100, 100), Size = new Size(100,100) }),
+                new Worm(new Position() {Coords = new Point(900, 100), Size = new Size(100,100) }),
+                new Worm(new Position() {Coords = new Point(100, 300), Size = new Size(100,100) }),
+                new Worm(new Position() {Coords = new Point(400, 500), Size = new Size(100,100) })
             };
+
+            world = new Space(objects.ToArray());
+            world.AddCollideInteraction(new Eat());
         }
 
-        public override bool Exist { get; }
-        public override void Happen(IInteraction<GameObject, GameObject> event_)
+        public void Tick()
         {
-            throw new NotImplementedException();
+            world.Tick();
+        }
+
+        public Player GetPlayer()
+        {
+            return player;
+        }
+
+        public void MoveCameraView(Direction direction, int distance)
+        {
+            world.MoveCameraView(direction, distance);
         }
     }
 }

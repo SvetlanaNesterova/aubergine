@@ -7,17 +7,12 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    class Eat : ICollideInteraction<Player, Worm>
+    class Eat : CollideInteraction<Player, Worm>
     {
-        public void Do(Player subject, Worm obj)
+        public override void Do(Player subject, Worm obj)
         {
             subject.Health++;
             obj.Die();
-        }
-
-        public bool IsAvailiable(Player subject, Worm obj)
-        {
-            throw new NotImplementedException();
         }
     }
 

@@ -35,7 +35,7 @@ namespace Game
 
             PaintEventHandler drawingField = (sender, args) =>
             {
-                foreach (var obj in game.objects)
+                foreach (var obj in game.Objects)
                {
                     var imgPath = defaultImg;
 
@@ -67,7 +67,7 @@ namespace Game
 
         private void DoMoving(Game game)
         {
-            var player = (Player)game.objects[0];
+            var player = game.GetPlayer();
             var direction = Direction.None;
             var distance = 5;
             

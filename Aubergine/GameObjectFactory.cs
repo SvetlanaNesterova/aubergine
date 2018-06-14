@@ -61,7 +61,7 @@ namespace Aubergine
         {
             Func<TName> parameterCreator = () => new TName() {Value = current, Min = min, Max = max};
             // может бфть ошибка
-            parameters[typeof(TName)] = parameterCreator;
+            Parameters[typeof(TName)] = parameterCreator;
             return this;
         }
 
@@ -70,7 +70,7 @@ namespace Aubergine
             var obj = new TCharacter();
             var d = new Dictionary<Type, object>();
             
-            foreach (var parameter in parameters)
+            foreach (var parameter in Parameters)
             {
                 d[parameter.Key] = ((Func<object>)parameter.Value)();
             }
