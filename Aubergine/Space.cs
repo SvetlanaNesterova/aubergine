@@ -7,29 +7,31 @@ using System.Threading.Tasks;
 namespace Aubergine
 {
     public class Space
-    {
+    { 
+        private Dictionary<Type, Dictionary<Type, Action<GameObject, GameObject>>>
+            intersectionActions = new Dictionary<Type, Dictionary<Type, Action<GameObject, GameObject>>>();
+
+        private CollideInteraction<GameObject, GameObject>[] collideInteractions;
+
         public virtual bool Exist { get; }
 
         public virtual void Happen(IInteraction<GameObject, GameObject> event_) { }
 
         public Space() : this(new GameObject[] { }) { }
 
-
-        public Space(GameObject[] objects)
-            
-        {
-
-        }
+        public Space(GameObject[] objects) { }
 
         public Space(GameObject[] objects,
-            ICollideInteraction<GameObject, GameObject>[] collideInteractions)
+            CollideInteraction<GameObject, GameObject>[] collideInteractions)
         {
+            this.collideInteractions = collideInteractions;
+            this.objects = objects.ToList();
 
         }
-
 
         public void Tick()
         {
+            
             // проверить все пересечения, произвести действия
 
             //throw new NotImplementedException();
@@ -50,9 +52,6 @@ namespace Aubergine
                 obj.Position.MoveDirection(direction, distance);
             }
         }
-
-        private Dictionary<Type, Dictionary<Type, Action<GameObject, GameObject>>> intersectionActions =
-            new Dictionary<Type, Dictionary<Type, Action<GameObject, GameObject>>>();
 
         public void SetIntersection<TFirst, TSecond>(Action<TFirst, TSecond> action)
             where TFirst : GameObject

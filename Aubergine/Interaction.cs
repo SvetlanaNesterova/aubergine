@@ -21,10 +21,20 @@ namespace Aubergine
         bool ShouldHappenNow();
     }
 
-    public interface ICollideInteraction<TSubject, TObject> : IInteraction<TSubject, TObject>
+    public abstract class CollideInteraction<TSubject, TObject> : IInteraction<TSubject, TObject>
         where TSubject : GameObject
         where TObject : GameObject
-    { }
+    {
+        public abstract void Do(TSubject subject, TObject obj);
 
+        public bool IsAvailiable(TSubject subject, TObject obj)
+        {
+            return subject.Position.IsIntersectedWith(obj.Position);
+        }
 
+        bool IInteraction<TSubject, TObject>.IsAvailiable(TSubject subject, TObject obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
