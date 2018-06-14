@@ -13,7 +13,14 @@ namespace Game
         class Health : Parameter<int> { }
         class Mana : Parameter<double> { }
         class NutritionalValue : Parameter<int> { }
-        class Apple : ParametrizedGameObject { }
+
+        class Apple : ParametrizedGameObject
+        {
+            public void Die()
+            {
+                IsOnMap = false;
+            }
+        }
         class Hero : ParametrizedGameObject { }
 
         private Space world;
@@ -25,9 +32,18 @@ namespace Game
         public Game()
         {
             #region
+
             var c = GameObjectFactory
                 .GetParametrizedCharacter<Hero>()
                 .WithParameter<int, Health>(50, 1, 100);
+                //.AddCollideInteraction<Apple>((hero, apple) =>
+                //{
+                //    if (hero.Position.IsIntersectedWith(apple.Position))
+                //    {
+                //        hero.Set<int, Health>(hero.Get<int, Health>() + apple.Get<int, NutritionalValue>());
+                //        apple.Die();
+                //    }
+                //});
 
             var c1 = c.Create();
 
@@ -41,7 +57,7 @@ namespace Game
                 .OnPos(1, 2)
                 .WithParameter<Health>(1, 100, 50)
                 .WithParameter<Mana>(1, 100, 100)
-                .AddInteraction<Apple>((her, appl) =>
+                .AddCollideInteraction<Apple>((her, appl) =>
                     {
                         her.Set<Health>(her.Get<Health> + appl.Get<Sytnost>);
                         appl.BeEaten();
@@ -52,7 +68,7 @@ namespace Game
                 .GetParametrizedCharacterFactory<Hero>()
                 .WithParameter<Health>(1, 100, 50)
                 .WithParameter<Mana>(1, 100)
-                .AddInteraction<Apple>((her, appl) =>
+                .AddCollideInteraction<Apple>((her, appl) =>
                 {
                     her.Set<Health>(her.Get < Health > +appl.Get<NutritionalValue>);
                     appl.BeEaten();
@@ -75,15 +91,15 @@ namespace Game
 
             */
             #endregion
-            player = new Player(new Position() { Coords = new Point(450, 200) });
+            player = new Player(new Position() { Coords = new Point(450, 200), Size = new Size(50, 50)});
 
             var objects = new List<GameObject>
             {
                 player,
-                new Worm(new Position() {Coords = new Point(100, 100), Size = new Size(100,100) }),
-                new Worm(new Position() {Coords = new Point(900, 100), Size = new Size(100,100) }),
-                new Worm(new Position() {Coords = new Point(100, 300), Size = new Size(100,100) }),
-                new Worm(new Position() {Coords = new Point(400, 500), Size = new Size(100,100) })
+                new Worm(new Position() {Coords = new Point(100, 100), Size = new Size(10, 10) }),
+                new Worm(new Position() {Coords = new Point(900, 100), Size = new Size(10, 10) }),
+                new Worm(new Position() {Coords = new Point(100, 300), Size = new Size(10, 10) }),
+                new Worm(new Position() {Coords = new Point(400, 500), Size = new Size(10, 10) })
             };
 
             world = new Space(objects.ToArray());

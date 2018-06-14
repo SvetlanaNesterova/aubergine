@@ -40,10 +40,6 @@ namespace Aubergine
         }
     }
 
-    public class Hero : ParametrizedGameObject { }
-
-    public class Health : Parameter<int> { }
-
     public abstract class Parameter<T> where T: IComparable
     {
         public T Value { get; set; }
@@ -55,8 +51,9 @@ namespace Aubergine
     public class ParametrizedCharacter<TCharacter> 
         where TCharacter : ParametrizedGameObject , new()
     {
-        private Dictionary<Type, object> Parameters = new Dictionary<Type, object>();
-        
+        private Dictionary<Type, object> parameters = new Dictionary<Type, object>();
+        private Dictionary<Type, Action<GameObject, GameObject>> collideInteractions = new Dictionary<Type, Action<GameObject, GameObject>>();
+
         public ParametrizedCharacter<TCharacter> WithParameter<TValue, TName>(
             TValue current, TValue min, TValue max)
             where TName : Parameter<TValue>, new()
@@ -64,7 +61,7 @@ namespace Aubergine
         {
             Func<TName> parameterCreator = () => new TName() {Value = current, Min = min, Max = max};
             // может бфть ошибка
-            Parameters[typeof(TName)] = parameterCreator;
+            parameters[typeof(TName)] = parameterCreator;
             return this;
         }
 
@@ -73,12 +70,19 @@ namespace Aubergine
             var obj = new TCharacter();
             var d = new Dictionary<Type, object>();
             
-            foreach (var parameter in Parameters)
+            foreach (var parameter in parameters)
             {
                 d[parameter.Key] = ((Func<object>)parameter.Value)();
             }
             obj.SetParameters(d);
             return obj;
+        }
+
+        public ParametrizedCharacter<TCharacter> AddCollideInteraction<T>(Action<TCharacter, T> action)
+            where T : ParametrizedGameObject
+        {
+            collideInteractions[typeof(TCharacter)] = (Action<GameObject, GameObject>) action;
+            return this;
         }
     }
 
