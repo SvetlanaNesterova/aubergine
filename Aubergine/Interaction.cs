@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Aubergine
 {
-    public interface IInteraction<TSubject, TObject> 
+    public interface IInteraction<TSubject, TObject>
         where TSubject : GameObject
         where TObject : GameObject
     {
@@ -22,22 +22,37 @@ namespace Aubergine
         void Happen(TObject1 subject, TObject2 obj);
         bool ShouldHappenNow(TObject1 subject, TObject2 obj);
     }
-    
+
     public class ConditionalEventWrapper
     {
+        public static ConditionalEventWrapper CreateWrapper<T1, T2>(
+            IConditionalEvent<T1, T2> iConditional)
+            where T1 : GameObject
+            where T2 : GameObject
+        {
+            var instance = new ConditionalEventWrapper(iConditional, typeof(T1), typeof(T2));
+            return instance;
+        }
+
         Func<GameObject, GameObject, bool> shouldHappen;
         Action<GameObject, GameObject> happen;
+        private Type firstArgType;
+        private Type secondArgType;
 
-        public ConditionalEventWrapper(object iConditional)
+        private ConditionalEventWrapper() { }
+
+        private ConditionalEventWrapper(object iConditional, Type firstType, Type secondType)
         {
-            // TODO: проверка что параметр действительно IConditional
-            Console.WriteLine("Use reflection");
+            firstArgType = firstType;
+            secondArgType = secondType;
             var type = iConditional.GetType();
+
             var happenMethod = type.GetMethod("Happen");
             happen = (first, second) =>
             {
                 happenMethod.Invoke(iConditional, new[] { first, second });
             };
+
             var isAvailiableMethod = type.GetMethod("ShouldHappenNow");
             shouldHappen = (first, second) =>
             {
@@ -45,13 +60,27 @@ namespace Aubergine
             };
         }
 
+        private void ValidateArgsTypes(GameObject first, GameObject second)
+        {
+            if (firstArgType != first.GetType())
+                throw new ArgumentException(
+                    $"Incorrect argument type {first.GetType()} for 'first'. " +
+                    $"Expected {firstArgType}.");
+            if (secondArgType != second.GetType())
+                throw new ArgumentException(
+                    $"Incorrect argument type {second.GetType()} for 'second'. " +
+                    $"Expected {secondArgType}.");
+        }
+
         public void Happen(GameObject first, GameObject second)
         {
+            ValidateArgsTypes(first, second);
             happen(first, second);
         }
 
         public bool ShouldHappenNow(GameObject first, GameObject second)
         {
+            ValidateArgsTypes(first, second);
             return shouldHappen(first, second);
         }
     }
@@ -68,7 +97,7 @@ namespace Aubergine
             return subject.Position.IsIntersectedWith(obj.Position);
         }
     }
-    
+
     // private
     class SimpleCollideInteraction<TObject1, TObject2> : CollideInteraction<TObject1, TObject2>
         where TObject1 : GameObject
@@ -76,7 +105,7 @@ namespace Aubergine
     {
         private Action<TObject1, TObject2> action;
 
-        public SimpleCollideInteraction(Action<TObject1,TObject2> action)
+        public SimpleCollideInteraction(Action<TObject1, TObject2> action)
         {
             this.action = action;
         }

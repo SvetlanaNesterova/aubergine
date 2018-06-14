@@ -22,29 +22,25 @@ namespace Aubergine
             this(objects, new CollideInteraction<GameObject, GameObject>[] { }) { }
 
         public Space(GameObject[] objects,
-            CollideInteraction<GameObject, GameObject>[] collideInteractions)
+            IConditionalEvent<GameObject, GameObject>[] conditionalEvents)
         {
             this.conditionalEvents = new Dictionary<Type, Dictionary<Type, ConditionalEventWrapper>>();
-            foreach (var interaction in collideInteractions)
+            foreach (var action in conditionalEvents)
             {
-                interaction.GetType();
+                action.GetType();
 
                 //AddToDictionary()
             }
             //this.collideInteractions;
             this.objects = objects.ToList();
             var enumerable = objects
-                .Where(obj => obj is ParametrizedGameObject)
                 .OfType<ParametrizedGameObject>();
 
             foreach (var obj in enumerable)
-                foreach (var dict in obj.CollideInteractions)
+                foreach (var dict in obj.ConditionalEvents)
                     AddToDictionary(obj.GetType(), dict.Key, dict.Value);
 
         }
-
-        IConditionalEvent<GameObject, GameObject>[] Events;
-        IInteraction<GameObject, GameObject>[] Interactions;
 
         public Space(GameObject[] objects,
             CollideInteraction<GameObject, GameObject>[] collideInteractions,
@@ -53,7 +49,7 @@ namespace Aubergine
 
         }
 
-            public void Tick()
+         public void Tick()
         {
             foreach (var first in objects)
             {
@@ -61,66 +57,36 @@ namespace Aubergine
                 {
                     if (second == first)
                         continue;
-                    var res = GetPossibleEventsFor(first, second);
-                    //if (res == null)
-                    //    res = GetIntersection(objType, subjType);
-                    if (res == null)
-                        continue;
-                    foreach (var conditionalEvent in res)
+                    foreach (var conditionalEvent in GetPossibleEventsFor(first, second))
                     {
                         if (conditionalEvent.ShouldHappenNow(first, second))
                             conditionalEvent.Happen(first, second);
                     }
-                    //var type = res.GetType();
-                    //bool isAvailiable = (bool)type.GetMethod("ShouldHappenNow").Invoke(res, new[] { first, second });
-                    //if (isAvailiable)
-                    //    type.GetMethod("Happen").Invoke(res, new[] { first, second });
                 }
             }
             // проверить все пересечения, произвести действия
-
-            //throw new NotImplementedException();
             objects = objects.Where(obj => obj.IsOnMap).ToList();
-        }
-
-        public void AddCollideAction<TFirst, TSecond>(Action<TFirst, TSecond> action)
-            where TFirst : GameObject
-            where TSecond : GameObject
-        {
-            AddToDictionary(typeof(TFirst), typeof(TSecond),
-                new SimpleCollideInteraction<TFirst, TSecond>(action));
         }
 
         public void AddIConditionalEvent<TFirst, TSecond>(IConditionalEvent<TFirst, TSecond> action)
            where TFirst : GameObject
            where TSecond : GameObject
         {
-            AddToDictionary(typeof(TFirst), typeof(TSecond), action);
+            AddToDictionary(typeof(TFirst), typeof(TSecond), ConditionalEventWrapper.CreateWrapper(action));
         }
 
         public void AddCollideInteraction<TFirst, TSecond>(CollideInteraction<TFirst, TSecond> action)
            where TFirst : GameObject
            where TSecond : GameObject
         {
-            AddToDictionary(typeof(TFirst), typeof(TSecond), action);
+            AddIConditionalEvent(action);
         }
 
-        private void AddToDictionary<TFirst, TSecond>(
-            Type first, Type second,
-            CollideInteraction<TFirst, TSecond> action)
-            where TFirst : GameObject
-            where TSecond : GameObject
+        public void AddCollideInteraction<TFirst, TSecond>(Action<TFirst, TSecond> action)
+                    where TFirst : GameObject
+                    where TSecond : GameObject
         {
-            if (!conditionalEvents.ContainsKey(first))
-                conditionalEvents[first] = new Dictionary<Type, ConditionalEventWrapper>();
-            conditionalEvents[first][second] = new ConditionalEventWrapper(action);
-        }
-
-        private void AddToDictionary(Type first, Type second, object action)
-        {
-            if (!conditionalEvents.ContainsKey(first))
-                conditionalEvents[first] = new Dictionary<Type, ConditionalEventWrapper>();
-            conditionalEvents[first][second] = new ConditionalEventWrapper(action);
+            AddCollideInteraction(new SimpleCollideInteraction<TFirst, TSecond>(action));
         }
 
         private IEnumerable<ConditionalEventWrapper> GetPossibleEventsFor<TFirst, TSecond>(TFirst first, TSecond second)
@@ -129,40 +95,19 @@ namespace Aubergine
         {
             var firstType = first.GetType();
             var secondType = second.GetType();
-            var res = GetIntersection(firstType, secondType);
+            var res = GetFromDictionary(firstType, secondType);
             if (res != null)
-                return new List<ConditionalEventWrapper>() { res };
-            return new List<ConditionalEventWrapper>() { };
+                yield return res;
         }
-        private void AddToDictionary(
-            Type first, Type second,
-            object action)
+
+        private void AddToDictionary(Type first, Type second, ConditionalEventWrapper action)
         {
-            if (!collideInteractions.ContainsKey(first))
-                collideInteractions[first] = new Dictionary<Type, object>();
-            // м.б. проблема
-            collideInteractions[first][second] = action;
+            if (!conditionalEvents.ContainsKey(first))
+                conditionalEvents[first] = new Dictionary<Type, ConditionalEventWrapper>();
+            conditionalEvents[first][second] = action;
         }
 
-
-        public Action<TFirst, TSecond> GetIntersection<TFirst, TSecond>()
-            where TFirst : GameObject
-            where TSecond : GameObject
-        {
-            var first = typeof(TFirst);
-            var second = typeof(TSecond);
-            if (conditionalEvents.ContainsKey(first))
-                if (conditionalEvents[first].ContainsKey(second))
-                    return ((IConditionalEvent<TFirst, TSecond>)conditionalEvents[first][second]).Happen;
-            // проблемы с тем, что CollideInteraction имеется только в одну сторону
-            
-            //if (collideInteractions.ContainsKey(second))
-            //    if (collideInteractions[second].ContainsKey(first))
-            //        return ((CollideInteraction<TFirst, TSecond>)collideInteractions[second][first]).Do;
-            return null;
-        }
-
-        private ConditionalEventWrapper GetIntersection(Type first, Type second)
+        private ConditionalEventWrapper GetFromDictionary(Type first, Type second)
         {
             if (conditionalEvents.ContainsKey(first))
                 if (conditionalEvents[first].ContainsKey(second))

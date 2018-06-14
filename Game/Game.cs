@@ -35,10 +35,6 @@ namespace Game
             player = c;
 
             #region ideas
-
-
-
-
             /*
             var hero = Factory
                 .GetParametrizedCharacter<Hero>()
@@ -112,9 +108,9 @@ namespace Game
         }
     }
 
-    class Health : IParameter<int> { }
-    class Mana : IParameter<double> { }
-    class NutritionalValue : IParameter<int> { }
+    class Health : Parameter<int> { }
+    class Mana : Parameter<double> { }
+    class NutritionalValue : Parameter<int> { }
 
     class Apple : ParametrizedGameObject
     {
