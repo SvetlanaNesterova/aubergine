@@ -9,34 +9,6 @@ namespace Aubergine
 {
     public abstract class MovingObject : GameObject
     {
-        public bool MoveUp(int distance)
-        {
-            // проверка корректности
-            Position.MoveUp(distance);
-            return true;
-        }
-
-        public bool MoveDown(int distance)
-        {
-            // проверка корректности
-            Position.MoveDown(distance);
-            return true;
-        }
-
-        public bool MoveRight(int distance)
-        {
-            // проверка корректности
-            Position.MoveRight(distance);
-            return true;
-        }
-
-        public bool MoveLeft(int distance)
-        {
-            // проверка корректности
-            Position.MoveLeft(distance);
-            return true;
-        }
-
         public bool MoveOnVector(Point vector)
         {
             // проверка корректности

@@ -12,7 +12,7 @@ namespace Aubergine
     public abstract class ParametrizedGameObject : GameObject
     {
         private Dictionary<Type, object> parameters;
-        internal Dictionary<Type, Action<GameObject, GameObject>> CollideInteractions = new Dictionary<Type, Action<GameObject, GameObject>>();
+        internal Dictionary<Type, object> CollideInteractions = new Dictionary<Type, object>();
 
         public TValue Get<TValue, TName>()
             where TName : IParameter<TValue>
@@ -53,7 +53,7 @@ namespace Aubergine
         where TCharacter : ParametrizedGameObject , new()
     {
         internal Dictionary<Type, object> parameters { get; } = new Dictionary<Type, object>();
-        private Dictionary<Type, Action<GameObject, GameObject>> collideInteractions = new Dictionary<Type, Action<GameObject, GameObject>>();
+        private Dictionary<Type, object> collideInteractions = new Dictionary<Type, object>();
 
         public ParametrizedCharacter<TCharacter> WithParameter<TValue, TName>(
             TValue current, TValue min, TValue max)
@@ -66,10 +66,9 @@ namespace Aubergine
             return this;
         }
 
-        public TCharacter Create()
+        public TCharacter CreateOnPosition(Position position)
         {
-            var obj = new TCharacter();
-            obj.CollideInteractions = collideInteractions;
+            var obj = new TCharacter {Position = position, CollideInteractions = collideInteractions};
             var d = new Dictionary<Type, object>();
             
             foreach (var parameter in parameters)
@@ -83,7 +82,8 @@ namespace Aubergine
         public ParametrizedCharacter<TCharacter> AddCollideInteraction<T>(Action<TCharacter, T> action)
             where T : ParametrizedGameObject
         {
-            collideInteractions[typeof(TCharacter)] = (Action<GameObject, GameObject>) action;
+            
+            collideInteractions[typeof(T)] = new StarndardCollideInteraction<TCharacter, T>(action);
             return this;
         }
     }

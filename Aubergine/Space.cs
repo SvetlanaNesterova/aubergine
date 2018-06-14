@@ -33,10 +33,13 @@ namespace Aubergine
             }
             //this.collideInteractions;
             this.objects = objects.ToList();
-            objects
+            var enumerable = objects
                 .Where(obj => obj is ParametrizedGameObject)
-                .Select(obj => ((ParametrizedGameObject) obj).CollideInteractions)
-                //HERE
+                .OfType<ParametrizedGameObject>();
+
+            foreach (var obj in enumerable)
+                foreach (var dict in obj.CollideInteractions)
+                    AddToDictionary(obj.GetType(), dict.Key, dict.Value);
 
         }
 
@@ -94,11 +97,12 @@ namespace Aubergine
         }
         private void AddToDictionary(
             Type first, Type second,
-            Action<GameObject, GameObject> action)
+            object action)
         {
             if (!collideInteractions.ContainsKey(first))
                 collideInteractions[first] = new Dictionary<Type, object>();
-            collideInteractions[first][second] = new StarndardCollideInteraction(action);
+            // м.б. проблема
+            collideInteractions[first][second] = action;
         }
 
         public Action<TFirst, TSecond> GetIntersection<TFirst, TSecond>()
