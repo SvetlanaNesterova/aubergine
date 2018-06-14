@@ -33,6 +33,7 @@ namespace Aubergine
             // проверить все пересечения, произвести действия
 
             //throw new NotImplementedException();
+            objects = objects.Where(obj => obj.IsOnMap).ToList();
         }
 
         public List<GameObject> objects;
