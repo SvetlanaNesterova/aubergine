@@ -13,5 +13,10 @@ namespace Game
         {
             Position = position;
         }
+
+        internal void Die()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -10,6 +10,8 @@ namespace Game
 {
     class Player : MovingObject
     {
+        public int Health { get; internal set; }
+
         public Player(Position pos)
         {
             Position = pos;

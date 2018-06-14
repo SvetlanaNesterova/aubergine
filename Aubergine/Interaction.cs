@@ -10,12 +10,21 @@ namespace Aubergine
         where TSubject : GameObject
         where TObject : GameObject
     {
-        void Do();
-        bool IsAvailiable();
+        void Do(TSubject subject, TObject obj);
+        bool IsAvailiable(TSubject subject, TObject obj);
+    }
+
+
+    public interface IConditionalEvent
+    {
+        void Happen();
+        bool ShouldHappenNow();
     }
 
     public interface ICollideInteraction<TSubject, TObject> : IInteraction<TSubject, TObject>
         where TSubject : GameObject
         where TObject : GameObject
     { }
+
+
 }
