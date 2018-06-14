@@ -13,7 +13,14 @@ namespace Game
         class Health : Parameter<int> { }
         class Mana : Parameter<double> { }
         class NutritionalValue : Parameter<int> { }
-        class Apple : ParametrizedGameObject { }
+
+        class Apple : ParametrizedGameObject
+        {
+            public void Die()
+            {
+                IsOnMap = false;
+            }
+        }
         class Hero : ParametrizedGameObject { }
 
 
@@ -23,7 +30,15 @@ namespace Game
         {
             var c = GameObjectFactory
                 .GetParametrizedCharacter<Hero>()
-                .WithParameter<int, Health>(50, 1, 100);
+                .WithParameter<int, Health>(50, 1, 100)
+                .AddCollideInteraction<Apple>((hero, apple) =>
+                {
+                    if (hero.Position.IsIntersectedWith(apple.Position))
+                    {
+                        hero.Set<int, Health>(hero.Get<int, Health>() + apple.Get<int, NutritionalValue>());
+                        apple.Die();
+                    }
+                });
 
             var c1 = c.Create();
                 
@@ -37,7 +52,7 @@ namespace Game
                 .OnPos(1, 2)
                 .WithParameter<Health>(1, 100, 50)
                 .WithParameter<Mana>(1, 100, 100)
-                .AddInteraction<Apple>((her, appl) =>
+                .AddCollideInteraction<Apple>((her, appl) =>
                     {
                         her.Set<Health>(her.Get<Health> + appl.Get<Sytnost>);
                         appl.BeEaten();
@@ -48,7 +63,7 @@ namespace Game
                 .GetParametrizedCharacterFactory<Hero>()
                 .WithParameter<Health>(1, 100, 50)
                 .WithParameter<Mana>(1, 100)
-                .AddInteraction<Apple>((her, appl) =>
+                .AddCollideInteraction<Apple>((her, appl) =>
                 {
                     her.Set<Health>(her.Get < Health > +appl.Get<NutritionalValue>);
                     appl.BeEaten();
