@@ -9,14 +9,19 @@ namespace Game
 {
     class Worm : GameObject
     {
+        public bool IsDead { get; private set; }
+
         public Worm(Position position)
         {
             Position = position;
+            IsOnMap = true;
+            IsDead = false;
         }
 
-        internal void Die()
+        public void Die()
         {
-            throw new NotImplementedException();
+            IsOnMap = false;
+            IsDead = true;
         }
     }
 }

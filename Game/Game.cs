@@ -81,7 +81,7 @@ namespace Game
         }
 
         public override bool Exist { get; }
-        public override void Happen(Interaction<GameObject, GameObject> event_)
+        public override void Happen(IInteraction<GameObject, GameObject> event_)
         {
             throw new NotImplementedException();
         }
