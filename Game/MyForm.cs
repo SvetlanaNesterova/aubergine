@@ -21,9 +21,7 @@ namespace Game
         private bool isL;
         private bool isR;
         private bool isDown;
-
-        private Direction playerDirection;
-
+        
         public MyForm()
         {
             DoubleBuffered = true;

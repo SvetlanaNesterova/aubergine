@@ -7,12 +7,31 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    class Eat : CollideInteraction<Player, Worm>
+    class Eat : IConditionalEvent<Player, Worm>
     {
-        public override void Happen(Player subject, Worm obj)
+        public void Happen(Player subject, Worm obj)
         {
             subject.Health++;
             obj.Die();
+        }
+
+        public bool ShouldHappenNow(Player subject, Worm obj)
+        {
+            return subject.Position.IsIntersectedWith(obj.Position);
+        }
+    }
+
+    class Attack : IInteraction<Player, Worm>
+    {
+        public void Do(Player subject, Worm obj)
+        {
+            subject.Health--;
+            obj.Die();
+        }
+
+        public bool IsAvailiable(Player subject, Worm obj)
+        {
+            return subject.Health > 10;
         }
     }
 

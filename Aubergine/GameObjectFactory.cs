@@ -14,7 +14,7 @@ namespace Aubergine
         private Dictionary<Type, object> parameters;
 
         public TValue Get<TValue, TName>()
-            where TName : Parameter<TValue>
+            where TName : IParameter<TValue>
             where TValue : IComparable
         {
             // if contains
@@ -26,7 +26,7 @@ namespace Aubergine
         }
         
         public void Set<TValue, TName>(TValue value)
-            where TName : Parameter<TValue>
+            where TName : IParameter<TValue>
             where TValue : IComparable
         {
             // if contains
@@ -40,7 +40,13 @@ namespace Aubergine
         }
     }
 
-    public abstract class Parameter<T> where T: IComparable
+    public interface IParameter<T> where T : IComparable
+    {
+        T Value { get; set; }
+        T Min { get; set; }
+        T Max { get; set; }
+    }
+    public class Parameter<T> : IParameter<T> where T : IComparable
     {
         public T Value { get; set; }
         public T Min { get; set; }
@@ -51,12 +57,12 @@ namespace Aubergine
     public class ParametrizedCharacter<TCharacter> 
         where TCharacter : ParametrizedGameObject , new()
     {
-        private Dictionary<Type, object> parameters = new Dictionary<Type, object>();
-        private Dictionary<Type, Action<GameObject, GameObject>> collideInteractions = new Dictionary<Type, Action<GameObject, GameObject>>();
+        private Dictionary<Type, object> parameters { get; } = new Dictionary<Type, object>();
+        private Dictionary<Type, Action<GameObject, GameObject>> collideInteractions { get; } = new Dictionary<Type, Action<GameObject, GameObject>>();
 
         public ParametrizedCharacter<TCharacter> WithParameter<TValue, TName>(
             TValue current, TValue min, TValue max)
-            where TName : Parameter<TValue>, new()
+            where TName : IParameter<TValue>, new()
             where TValue : IComparable
         {
             Func<TName> parameterCreator = () => new TName() {Value = current, Min = min, Max = max};

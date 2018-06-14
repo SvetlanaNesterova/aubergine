@@ -9,7 +9,7 @@ namespace Aubergine
     public class Space
     {
         public List<GameObject> objects;
-        private Dictionary<Type, Dictionary<Type, object>> collideInteractions;
+        private Dictionary<Type, Dictionary<Type, ConditionalEventWrapper>> conditionalEvents;
 
         public virtual bool Exist { get; }
 
@@ -23,7 +23,7 @@ namespace Aubergine
         public Space(GameObject[] objects,
             CollideInteraction<GameObject, GameObject>[] collideInteractions)
         {
-            this.collideInteractions = new Dictionary<Type, Dictionary<Type, object>>();
+            this.conditionalEvents = new Dictionary<Type, Dictionary<Type, ConditionalEventWrapper>>();
             foreach (var interaction in collideInteractions)
             {
                 interaction.GetType();
@@ -32,28 +32,42 @@ namespace Aubergine
             }
             //this.collideInteractions;
             this.objects = objects.ToList();
+     
 
         }
 
-        public void Tick()
+        IConditionalEvent<GameObject, GameObject>[] Events;
+        IInteraction<GameObject, GameObject>[] Interactions;
+
+        public Space(GameObject[] objects,
+            CollideInteraction<GameObject, GameObject>[] collideInteractions,
+            IInteraction<GameObject, GameObject>[] interactions)
         {
-            foreach (var subj in objects)
+
+        }
+
+            public void Tick()
+        {
+            foreach (var first in objects)
             {
-                foreach (var obj_ in objects)
+                foreach (var second in objects)
                 {
-                    if (obj_ == subj)
+                    if (second == first)
                         continue;
-                    var subjType = subj.GetType();
-                    var objType = obj_.GetType();
-                    var res = GetIntersection(subjType, objType);
+                    var res = GetPossibleEventsFor(first, second);
                     //if (res == null)
                     //    res = GetIntersection(objType, subjType);
                     if (res == null)
                         continue;
-                    var type = res.GetType();
-                    bool isAvailiable = (bool)type.GetMethod("ShouldHappenNow").Invoke(res, new[] { subj, obj_ });
-                    if (isAvailiable)
-                        type.GetMethod("Happen").Invoke(res, new[] { subj, obj_ });
+                    foreach (var conditionalEvent in res)
+                    {
+                        if (conditionalEvent.ShouldHappenNow(first, second))
+                            conditionalEvent.Happen(first, second);
+                    }
+                    //var type = res.GetType();
+                    //bool isAvailiable = (bool)type.GetMethod("ShouldHappenNow").Invoke(res, new[] { first, second });
+                    //if (isAvailiable)
+                    //    type.GetMethod("Happen").Invoke(res, new[] { first, second });
                 }
             }
             // проверить все пересечения, произвести действия
@@ -67,7 +81,14 @@ namespace Aubergine
             where TSecond : GameObject
         {
             AddToDictionary(typeof(TFirst), typeof(TSecond),
-                new StarndardCollideInteraction<TFirst, TSecond>(action));
+                new SimpleCollideInteraction<TFirst, TSecond>(action));
+        }
+
+        public void AddIConditionalEvent<TFirst, TSecond>(IConditionalEvent<TFirst, TSecond> action)
+           where TFirst : GameObject
+           where TSecond : GameObject
+        {
+            AddToDictionary(typeof(TFirst), typeof(TSecond), action);
         }
 
         public void AddCollideInteraction<TFirst, TSecond>(CollideInteraction<TFirst, TSecond> action)
@@ -83,10 +104,30 @@ namespace Aubergine
             where TFirst : GameObject
             where TSecond : GameObject
         {
-            if (!collideInteractions.ContainsKey(first))
-                collideInteractions[first] = new Dictionary<Type, object>();
-            collideInteractions[first][second] = action;
+            if (!conditionalEvents.ContainsKey(first))
+                conditionalEvents[first] = new Dictionary<Type, ConditionalEventWrapper>();
+            conditionalEvents[first][second] = new ConditionalEventWrapper(action);
         }
+
+        private void AddToDictionary(Type first, Type second, object action)
+        {
+            if (!conditionalEvents.ContainsKey(first))
+                conditionalEvents[first] = new Dictionary<Type, ConditionalEventWrapper>();
+            conditionalEvents[first][second] = new ConditionalEventWrapper(action);
+        }
+
+        private IEnumerable<ConditionalEventWrapper> GetPossibleEventsFor<TFirst, TSecond>(TFirst first, TSecond second)
+            where TFirst : GameObject
+            where TSecond : GameObject
+        {
+            var firstType = first.GetType();
+            var secondType = second.GetType();
+            var res = GetIntersection(firstType, secondType);
+            if (res != null)
+                return new List<ConditionalEventWrapper>() { res };
+            return new List<ConditionalEventWrapper>() { };
+        }
+
 
         public Action<TFirst, TSecond> GetIntersection<TFirst, TSecond>()
             where TFirst : GameObject
@@ -94,9 +135,9 @@ namespace Aubergine
         {
             var first = typeof(TFirst);
             var second = typeof(TSecond);
-            if (collideInteractions.ContainsKey(first))
-                if (collideInteractions[first].ContainsKey(second))
-                    return ((CollideInteraction<TFirst, TSecond>)collideInteractions[first][second]).Happen;
+            if (conditionalEvents.ContainsKey(first))
+                if (conditionalEvents[first].ContainsKey(second))
+                    return ((IConditionalEvent<TFirst, TSecond>)conditionalEvents[first][second]).Happen;
             // проблемы с тем, что CollideInteraction имеется только в одну сторону
             
             //if (collideInteractions.ContainsKey(second))
@@ -105,16 +146,11 @@ namespace Aubergine
             return null;
         }
 
-        private object GetIntersection(Type first, Type second)
+        private ConditionalEventWrapper GetIntersection(Type first, Type second)
         {
-            if (collideInteractions.ContainsKey(first))
-                if (collideInteractions[first].ContainsKey(second))
-                    return collideInteractions[first][second];
-            // проблемы с тем, что CollideInteraction имеется только в одну сторону
-
-            //if (collideInteractions.ContainsKey(second))
-            //    if (collideInteractions[second].ContainsKey(first))
-            //        return ((CollideInteraction<TFirst, TSecond>)collideInteractions[second][first]).Do;
+            if (conditionalEvents.ContainsKey(first))
+                if (conditionalEvents[first].ContainsKey(second))
+                    return conditionalEvents[first][second];
             return null;
         }
 
