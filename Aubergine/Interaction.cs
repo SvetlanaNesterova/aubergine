@@ -6,11 +6,16 @@ using System.Threading.Tasks;
 
 namespace Aubergine
 {
-    public abstract class Interaction<TSubject, TObject>
+    public interface IInteraction<TSubject, TObject>
         where TSubject : GameObject
         where TObject : GameObject
     {
-        public abstract void Do();
-        public abstract bool IsAvailiable();
+        void Do();
+        bool IsAvailiable();
     }
+
+    public interface ICollideInteraction<TSubject, TObject> : IInteraction<TSubject, TObject>
+        where TSubject : GameObject
+        where TObject : GameObject
+    { }
 }

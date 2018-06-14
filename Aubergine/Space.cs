@@ -6,11 +6,27 @@ using System.Threading.Tasks;
 
 namespace Aubergine
 {
-    public abstract class Space
+    public class Space
     {
-        public abstract bool Exist { get; }
+        public virtual bool Exist { get; }
 
-        public abstract void Happen(Interaction<GameObject, GameObject> event_);
+        public virtual void Happen(IInteraction<GameObject, GameObject> event_) { }
+
+        public Space() : this(new GameObject[] { }) { }
+
+
+        public Space(GameObject[] objects)
+            
+        {
+
+        }
+
+        public Space(GameObject[] objects,
+            ICollideInteraction<GameObject, GameObject>[] collideInteractions)
+        {
+
+        }
+
 
         public void Tick()
         {

@@ -10,10 +10,12 @@ namespace Aubergine
     public class Position
     {
         public Point Coords { get; set; }
+        public Size Size { get; set; }
+        public Rectangle Body { get => new Rectangle(Coords, Size); }
 
         public bool IsIntersectedWith(Position other)
         {
-            return Coords == other.Coords;
+            return Body.IntersectsWith(other.Body);
         }
 
         internal void MoveUp(int distance)

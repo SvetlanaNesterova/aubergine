@@ -10,6 +10,11 @@ namespace Game
 {
     class Game : Space
     {
+
+        private IInteraction<GameObject, GameObject>[] interactions;
+        private ICollideInteraction<GameObject, GameObject>[] collideInteractions;
+
+
         /*
         class Health : IParameter<int> { }
         class Mana : IParameter<int> { }
@@ -21,8 +26,9 @@ namespace Game
         */
         public Game()
         {
+            #region
             /*
-            var hero = Factory
+             var hero = Factory
                 .GetParametrizedCharacter<Hero>()
                 .OnPos(1, 2)
                 .WithParameter<Health>(1, 100, 50)
@@ -60,6 +66,8 @@ namespace Game
             c.Set<Health>();
 
             */
+            #endregion
+
             objects = new List<GameObject>
             {
                 new Player(new Position() {Coords = new Point(450,200)}),
@@ -68,12 +76,13 @@ namespace Game
                 new Worm(new Position() {Coords = new Point(100, 300)}),
                 new Worm(new Position() {Coords = new Point(400, 500)})
             };
+
+            var space = new Space(objects.ToArray());
+
         }
 
+
         public override bool Exist { get; }
-        public override void Happen(Interaction<GameObject, GameObject> event_)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }
