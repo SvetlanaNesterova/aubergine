@@ -10,7 +10,7 @@ namespace Aubergine
     public abstract class GameObject
     {
         public virtual Position Position { get; set; }
-        public bool IsOnMap { get; protected set; }
+        public bool IsOnMap { get; protected set; } = true;
 
     }
 }

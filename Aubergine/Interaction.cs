@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Aubergine
 {
-    public interface IInteraction<TSubject, TObject>
+    public interface IInteraction<TSubject, TObject> 
         where TSubject : GameObject
         where TObject : GameObject
     {
@@ -14,7 +14,7 @@ namespace Aubergine
         bool IsAvailiable(TSubject subject, TObject obj);
     }
 
-
+    
     public interface IConditionalEvent
     {
         void Happen();
@@ -31,10 +31,25 @@ namespace Aubergine
         {
             return subject.Position.IsIntersectedWith(obj.Position);
         }
+    }
 
-        bool IInteraction<TSubject, TObject>.IsAvailiable(TSubject subject, TObject obj)
+    
+
+    // private
+    class StarndardCollideInteraction<TSubject, TObject> : CollideInteraction<TSubject, TObject>
+        where TSubject : GameObject
+        where TObject : GameObject
+    {
+        private Action<TSubject, TObject> action;
+
+        public StarndardCollideInteraction(Action<TSubject,TObject> action)
         {
-            throw new NotImplementedException();
+            this.action = action;
+        }
+
+        public override void Do(TSubject subject, TObject obj)
+        {
+            action.Invoke(subject, obj);
         }
     }
 }
