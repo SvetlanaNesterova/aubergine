@@ -14,7 +14,7 @@ namespace Aubergine
 
         public virtual bool Exist { get; }
 
-        public virtual void Happen(IInteraction<GameObject, GameObject> event_) { }
+        public virtual void Happen(IConditionalEvent<GameObject, GameObject> event_) { }
 
         public Space() : this(new GameObject[] { }) { }
 
@@ -56,9 +56,9 @@ namespace Aubergine
                     if (res == null)
                         continue;
                     var type = res.GetType();
-                    bool isAvailiable = (bool)type.GetMethod("IsAvailiable").Invoke(res, new[] { subj, obj_ });
+                    bool isAvailiable = (bool)type.GetMethod("ShouldHappenNow").Invoke(res, new[] { subj, obj_ });
                     if (isAvailiable)
-                        type.GetMethod("Do").Invoke(res, new[] { subj, obj_ });
+                        type.GetMethod("Happen").Invoke(res, new[] { subj, obj_ });
                 }
             }
             // проверить все пересечения, произвести действия
@@ -109,7 +109,7 @@ namespace Aubergine
             var second = typeof(TSecond);
             if (collideInteractions.ContainsKey(first))
                 if (collideInteractions[first].ContainsKey(second))
-                    return ((CollideInteraction<TFirst, TSecond>)collideInteractions[first][second]).Do;
+                    return ((CollideInteraction<TFirst, TSecond>)collideInteractions[first][second]).Happen;
             // проблемы с тем, что CollideInteraction имеется только в одну сторону
             
             //if (collideInteractions.ContainsKey(second))

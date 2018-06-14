@@ -9,7 +9,7 @@ namespace Game
 {
     class Eat : CollideInteraction<Player, Worm>
     {
-        public override void Do(Player subject, Worm obj)
+        public override void Happen(Player subject, Worm obj)
         {
             subject.Health++;
             obj.Die();
