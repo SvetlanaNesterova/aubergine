@@ -12,5 +12,7 @@ namespace Aubergine
         public virtual Position Position { get; set; }
         public bool IsOnMap { get; protected set; } = true;
 
+        public GameObject() { }
+        public GameObject(Position position) => Position = position;
     }
 }

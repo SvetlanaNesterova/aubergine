@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Collections.Immutable;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 
@@ -9,39 +10,39 @@ namespace Aubergine
 {
     public class World
     {
-        public List<GameObject> objects;
-        private Dictionary<Type, Dictionary<Type, List<ConditionalEventWrapper>>> conditionalEvents;
+        public ImmutableList<GameObject> Objects { get; private set; }
+        public Physics Physics { get; }
 
-        public virtual bool Exist { get; }
+        private Dictionary<Type, Dictionary<Type, List<ConditionalEventWrapper>>> conditionalEvents = 
+            new Dictionary<Type, Dictionary<Type, List<ConditionalEventWrapper>>>();
 
-        public virtual void Happen(IConditionalEvent<GameObject, GameObject> event_) { }
+        public World(Physics physics) : this(physics, new GameObject[] { }) { }
 
-        public World() : this(new GameObject[] { }) { }
-
-        public World(GameObject[] objects) :
-            this(objects, new ConditionalEventWrapper[] { })
+        public World(Physics physics, GameObject[] objects) :
+            this(physics, objects, new ConditionalEventWrapper[] { })
         { }
 
-        public World(GameObject[] objects,
+        public World(Physics physics, GameObject[] objects,
             ConditionalEventWrapper[] conditionalEvents)
         {
-            this.conditionalEvents = new Dictionary<Type, Dictionary<Type, List<ConditionalEventWrapper>>>();
+            Physics = physics;
+            Physics.AddWorld(this);
+            Position.AddPhysics(physics);
+
+            this.Objects = objects.ToImmutableList();
+            var enumerable = objects
+                .OfType<ParametrizedGameObject>();
+            foreach (var obj in enumerable)
+                AddParametrizedObject(obj);
+             
             foreach (var action in conditionalEvents)
             {
                 AddToDictionary(action.FirstArgType, action.SecondArgType, action);
             }
-            this.objects = objects.ToList();
-            var enumerable = objects
-                .OfType<ParametrizedGameObject>();
-
-            foreach (var obj in enumerable)
-                foreach (var dict in obj.ConditionalEvents)
-                    foreach (var item in dict.Value)
-                        AddToDictionary(obj.GetType(), dict.Key, item);
 
         }
 
-        public World(GameObject[] objects,
+        public World(Physics physics, GameObject[] objects,
             CollideInteraction<GameObject, GameObject>[] collideInteractions,
             IInteraction<GameObject, GameObject>[] interactions)
         {
@@ -50,9 +51,9 @@ namespace Aubergine
 
         public void Tick()
         {
-            foreach (var first in objects)
+            foreach (var first in Objects)
             {
-                foreach (var second in objects)
+                foreach (var second in Objects)
                 {
                     foreach (var conditionalEvent in GetPossibleEventsFor(first, second))
                     {
@@ -62,26 +63,59 @@ namespace Aubergine
                 }
             }
             // проверить все пересечения, произвести действия
-            objects = objects.Where(obj => obj.IsOnMap).ToList();
+            Objects = Objects.Where(obj => obj.IsOnMap).ToImmutableList();
+        }
+        
+        /*private void InjectPhysics(GameObject obj)
+        {
+            var movable = obj as IMovingObject;
+            if (movable == null)
+                return;
+            var type = obj.GetType();
+            var old = type.GetMethod("MoveOnVector");
+            type.
+            Func<Point, bool> newM = (vector) =>
+            {
+                if (Physics.MoveOnVector(obj, vector))
+                    return ((IMovingObject)obj).MoveOnVector(vector);
+                return false;
+            };
+            Injector.Inject(type, old, newM.Method);
+        }*/
+        
+        public bool AddObject(GameObject obj)
+        {
+            // if не помещается на карте - return false;
+            Objects = Objects.Add(obj);
+            if (obj is ParametrizedGameObject)
+                AddParametrizedObject((ParametrizedGameObject)obj);
+            return true;
+        }
+
+        private void AddParametrizedObject(ParametrizedGameObject obj)
+        {
+            foreach (var dict in obj.ConditionalEvents)
+                foreach (var item in dict.Value)
+                    AddToDictionary(obj.GetType(), dict.Key, item);
         }
 
         public void AddIConditionalEvent<TFirst, TSecond>(IConditionalEvent<TFirst, TSecond> action)
-           where TFirst : GameObject
-           where TSecond : GameObject
+            where TFirst : GameObject
+            where TSecond : GameObject
         {
             AddToDictionary(typeof(TFirst), typeof(TSecond), ConditionalEventWrapper.CreateWrapper(action));
         }
 
         public void AddCollideInteraction<TFirst, TSecond>(CollideInteraction<TFirst, TSecond> action)
-           where TFirst : GameObject
-           where TSecond : GameObject
+            where TFirst : GameObject
+            where TSecond : GameObject
         {
             AddIConditionalEvent(action);
         }
 
         public void AddCollideInteraction<TFirst, TSecond>(Action<TFirst, TSecond> action)
-                    where TFirst : GameObject
-                    where TSecond : GameObject
+            where TFirst : GameObject
+            where TSecond : GameObject
         {
             AddCollideInteraction(new SimpleCollideInteraction<TFirst, TSecond>(action));
         }
@@ -114,10 +148,16 @@ namespace Aubergine
             return new List<ConditionalEventWrapper>();
         }
 
-        public IEnumerable<GameObject> GetObjectsInRectangle(Rectangle region)
+        public void MoveCameraView(Point vector)
         {
-            return objects
-                .Where(obj => region.IntersectsWith(obj.Position.Body));
+            MoveCameraView(Direction.Right, vector.X);
+            MoveCameraView(Direction.Up, vector.Y);
+        }
+
+        public void MoveCameraView(Direction direction, int distance)
+        {
+            foreach (var obj in Objects)
+                obj.Position.MoveDirection(direction, distance);
         }
     }
 }
