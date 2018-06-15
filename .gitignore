@@ -36,6 +36,9 @@
 /Game/bin/Debug/Aubergine.dll
 /Game/obj/Debug
 /packages
+/Aubergine/bin/Release
+/Game/bin/Release
+/Game/obj/Release
 /PtichkaGame/bin/Debug/System.Collections.Immutable.xml
 /PtichkaGame/bin/Debug/System.Collections.Immutable.dll
 /PtichkaGame/bin/Debug/PtichkaGame.pdb

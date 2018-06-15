@@ -14,7 +14,7 @@ namespace Aubergine
         public abstract bool AllowMoveOnVector(Position obj, Point vector);
     }
 
-    public class FourWaysPhysics : Physics
+    public class FourWays : Physics
     {
         private World world;
 
