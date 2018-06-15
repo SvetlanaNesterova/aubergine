@@ -36,3 +36,6 @@
 /Game/bin/Debug/Aubergine.dll
 /Game/obj/Debug
 /packages
+/Aubergine/bin/Release
+/Game/bin/Release
+/Game/obj/Release

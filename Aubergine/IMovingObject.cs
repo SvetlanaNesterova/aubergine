@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace Aubergine
 {
-    public interface IMovingObject<T> where T: Physics
+    public interface IMovingObject
     {
-        bool MoveOnVector(Point vector);
-
+        int Speed { get; set; }
         bool MoveInDirection(Direction direction, int distance);
     }
 }
