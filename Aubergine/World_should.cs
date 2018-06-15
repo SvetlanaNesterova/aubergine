@@ -57,7 +57,9 @@ namespace Aubergine
             var obj1 = new Object1() { Position = new Position(new Point(0, 0), new Size(1, 1)) };
             var obj2 = new Object2() { Position = new Position(new Point(1, 1), new Size(1, 1)) };
             collideEvent = A.Fake<CollideInteraction<Object1, Object2>>();
-            var world = new World(new GameObject[] { obj1, obj2 });
+            var world = new World(
+                new ForWaysUnpermeablePhysics(),
+                new GameObject[] { obj1, obj2 });
             world.AddIConditionalEvent(collideEvent);
 
             world.Tick();
@@ -74,7 +76,9 @@ namespace Aubergine
             var obj1 = new Object1();// { Position = new Position(new Point(0, 0), new Size(1, 1)) };
             var obj2 = new Object2();// { Position = new Position(new Point(1, 1), new Size(1, 1)) };
             var condEvent = new FakeEvent();
-            var world = new World(new GameObject[] { obj1, obj2 });
+            var world = new World(
+                new ForWaysUnpermeablePhysics(),
+                new GameObject[] { obj1, obj2 });
             world.AddIConditionalEvent(condEvent);
             world.Tick();
             Assert.AreEqual(condEvent.ShouldCount, 1);
@@ -88,7 +92,9 @@ namespace Aubergine
                 new Position(new Point(0, 0), new Size(2, 2)) };
             var obj2 = new Object2() { Position = 
                 new Position(new Point(2, 2), new Size(2, 2)) };
-            var world = new World(new GameObject[] { obj1, obj2 });
+            var world = new World(
+                new ForWaysUnpermeablePhysics(),
+                new GameObject[] { obj1, obj2 });
             var fake = new FakeCollideInteraction();
             world.AddIConditionalEvent(fake);
             world.Tick();

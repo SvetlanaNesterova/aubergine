@@ -10,6 +10,14 @@ namespace Game
 {
     class Player : ParametrizedGameObject, IMovingObject
     {
+        public Player()
+        { }
+
+        public Player(Position position)
+        {
+            Position = position;
+        }
+
         public int Health { get; internal set; }
         
         public bool MoveOnVector(Point vector)

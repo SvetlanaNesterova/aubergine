@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,11 +13,10 @@ namespace Game
     {
         private World world;
         private Player player;
-        public List<GameObject> Objects => world.objects;
+        public ImmutableList<GameObject> Objects => world.Objects;
         
         public Game()
         {
-
             var c = GameObjectFactory
                 .GetParametrizedCharacter<Player>()
                 .WithParameter<int, Health>(50, 1, 100)
@@ -30,10 +30,12 @@ namespace Game
             var a = GameObjectFactory
                 .GetParametrizedCharacter<Worm>()
                 .WithParameter<int, NutritionalValue>(10, 1, 1)
-                .If(worm => !worm.IsDead).Then(worm => worm.Die())
+                .If(worm => !worm.IsDead).Then(worm => { })
                 .CreateOnPosition(new Position(new Point(100, 100), new Size(20, 20)));
 
-            world = new World(new GameObject[] {c, a});
+            world = new World(
+                new ForWaysUnpermeablePhysics(),
+                new GameObject[] {c, a});
             player = c;
 
             #region ideas
@@ -80,7 +82,7 @@ namespace Game
             #endregion
 
             //player = new Player(new Position(new Point(450, 200), new Size(50, 50)));
-            //
+
             //var objects = new List<GameObject>
             //{
             //    player,
@@ -90,7 +92,7 @@ namespace Game
             //    new Worm(new Position(new Point(400, 500), new Size(10, 10)))
             //};
             //world = new World(objects.ToArray());
-            //world = new World(objects.ToArray(), 
+            //world = new World(objects.ToArray(),
             //    new ConditionalEventWrapper[] { new Eat().Wrap() });
             //world.AddIConditionalEvent(new Eat());
         }
