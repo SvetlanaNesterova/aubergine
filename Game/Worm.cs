@@ -7,17 +7,10 @@ using Aubergine;
 
 namespace Game
 {
-    class Worm : GameObject
+    class Worm : ParametrizedGameObject
     {
         public bool IsDead { get; private set; }
-
-        public Worm(Position position)
-        {
-            Position = position;
-            IsOnMap = true;
-            IsDead = false;
-        }
-
+        
         public void Die()
         {
             IsOnMap = false;

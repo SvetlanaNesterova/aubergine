@@ -17,22 +17,24 @@ namespace Game
         public Game()
         {
 
-            //var c = GameObjectFactory
-            //    .GetParametrizedCharacter<Hero>()
-            //    .WithParameter<int, Health>(50, 1, 100)
-            //    .AddCollideInteraction<Apple>((hero, apple) =>
-            //    {
-            //        hero.Set<int, Health>(hero.Get<int, Health>() + apple.Get<int, NutritionalValue>());
-            //        apple.Die();
-            //    })
-            //    .CreateOnPosition(new Position(new Point(450, 200), new Size(50, 50)));
-            //
-            //var a = GameObjectFactory
-            //    .GetParametrizedCharacter<Apple>()
-            //    .WithParameter<int, NutritionalValue>(10, 1, 1)
-            //    .CreateOnPosition(new Position(new Point(100, 100), new Size(20, 20)));
-            //world = new Space(new GameObject[] {c, a});
-            //player = c;
+            var c = GameObjectFactory
+                .GetParametrizedCharacter<Player>()
+                .WithParameter<int, Health>(50, 1, 100)
+                .AddCollideInteraction<Worm>((hero, apple) =>
+                {
+                    hero.Set<int, Health>(hero.Get<int, Health>() + apple.Get<int, NutritionalValue>());
+                    apple.Die();
+                })
+                .CreateOnPosition(new Position(new Point(450, 200), new Size(50, 50)));
+            
+            var a = GameObjectFactory
+                .GetParametrizedCharacter<Worm>()
+                .WithParameter<int, NutritionalValue>(10, 1, 1)
+                .If(worm => !worm.IsDead).Then(worm => worm.Die())
+                .CreateOnPosition(new Position(new Point(100, 100), new Size(20, 20)));
+
+            world = new World(new GameObject[] {c, a});
+            player = c;
 
             #region ideas
             /*
@@ -77,19 +79,19 @@ namespace Game
 
             #endregion
 
-            player = new Player(new Position(new Point(450, 200), new Size(50, 50)));
-            
-            var objects = new List<GameObject>
-            {
-                player,
-                new Worm(new Position(new Point(100, 100), new Size(10, 10))),
-                new Worm(new Position(new Point(900, 100), new Size(10, 10))),
-                new Worm(new Position(new Point(100, 300), new Size(10, 10))),
-                new Worm(new Position(new Point(400, 500), new Size(10, 10)))
-            };
-            world = new World(objects.ToArray());
-            world = new World(objects.ToArray(), 
-                new ConditionalEventWrapper[] { new Eat().Wrap() });
+            //player = new Player(new Position(new Point(450, 200), new Size(50, 50)));
+            //
+            //var objects = new List<GameObject>
+            //{
+            //    player,
+            //    new Worm(new Position(new Point(100, 100), new Size(10, 10))),
+            //    new Worm(new Position(new Point(900, 100), new Size(10, 10))),
+            //    new Worm(new Position(new Point(100, 300), new Size(10, 10))),
+            //    new Worm(new Position(new Point(400, 500), new Size(10, 10)))
+            //};
+            //world = new World(objects.ToArray());
+            //world = new World(objects.ToArray(), 
+            //    new ConditionalEventWrapper[] { new Eat().Wrap() });
             //world.AddIConditionalEvent(new Eat());
         }
 

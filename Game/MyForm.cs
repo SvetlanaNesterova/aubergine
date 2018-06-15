@@ -37,7 +37,7 @@ namespace Game
                {
                     var img = defaultImg;
 
-                    if (obj is Hero)
+                    if (obj is Player)
                         img = playerImg;
                     if (obj is Worm)
                         img = wormImg;

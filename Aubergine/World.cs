@@ -54,8 +54,6 @@ namespace Aubergine
             {
                 foreach (var second in objects)
                 {
-                    if (second == first)
-                        continue;
                     foreach (var conditionalEvent in GetPossibleEventsFor(first, second))
                     {
                         if (conditionalEvent.ShouldHappenNow(first, second))
