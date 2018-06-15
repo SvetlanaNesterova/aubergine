@@ -7,49 +7,48 @@ using System.Threading.Tasks;
 
 namespace Aubergine
 {
-    public class Space
+    public class World
     {
         public List<GameObject> objects;
-        private Dictionary<Type, Dictionary<Type, ConditionalEventWrapper>> conditionalEvents;
+        private Dictionary<Type, Dictionary<Type, List<ConditionalEventWrapper>>> conditionalEvents;
 
         public virtual bool Exist { get; }
 
         public virtual void Happen(IConditionalEvent<GameObject, GameObject> event_) { }
 
-        public Space() : this(new GameObject[] { }) { }
+        public World() : this(new GameObject[] { }) { }
 
-        public Space(GameObject[] objects) : 
-            this(objects, new CollideInteraction<GameObject, GameObject>[] { }) { }
+        public World(GameObject[] objects) :
+            this(objects, new ConditionalEventWrapper[] { })
+        { }
 
-        public Space(GameObject[] objects,
-            IConditionalEvent<GameObject, GameObject>[] conditionalEvents)
+        public World(GameObject[] objects,
+            ConditionalEventWrapper[] conditionalEvents)
         {
-            this.conditionalEvents = new Dictionary<Type, Dictionary<Type, ConditionalEventWrapper>>();
+            this.conditionalEvents = new Dictionary<Type, Dictionary<Type, List<ConditionalEventWrapper>>>();
             foreach (var action in conditionalEvents)
             {
-                action.GetType();
-
-                //AddToDictionary()
+                AddToDictionary(action.FirstArgType, action.SecondArgType, action);
             }
-            //this.collideInteractions;
             this.objects = objects.ToList();
             var enumerable = objects
                 .OfType<ParametrizedGameObject>();
 
             foreach (var obj in enumerable)
                 foreach (var dict in obj.ConditionalEvents)
-                    AddToDictionary(obj.GetType(), dict.Key, dict.Value);
+                    foreach (var item in dict.Value)
+                        AddToDictionary(obj.GetType(), dict.Key, item);
 
         }
 
-        public Space(GameObject[] objects,
+        public World(GameObject[] objects,
             CollideInteraction<GameObject, GameObject>[] collideInteractions,
             IInteraction<GameObject, GameObject>[] interactions)
         {
 
         }
 
-         public void Tick()
+        public void Tick()
         {
             foreach (var first in objects)
             {
@@ -96,23 +95,25 @@ namespace Aubergine
             var firstType = first.GetType();
             var secondType = second.GetType();
             var res = GetFromDictionary(firstType, secondType);
-            if (res != null)
-                yield return res;
+            foreach (var event_ in res)
+                yield return event_;
         }
 
         private void AddToDictionary(Type first, Type second, ConditionalEventWrapper action)
         {
             if (!conditionalEvents.ContainsKey(first))
-                conditionalEvents[first] = new Dictionary<Type, ConditionalEventWrapper>();
-            conditionalEvents[first][second] = action;
+                conditionalEvents[first] = new Dictionary<Type, List<ConditionalEventWrapper>>();
+            if (!conditionalEvents[first].ContainsKey(second))
+                conditionalEvents[first][second] = new List<ConditionalEventWrapper>();
+            conditionalEvents[first][second].Add(action);
         }
 
-        private ConditionalEventWrapper GetFromDictionary(Type first, Type second)
+        private List<ConditionalEventWrapper> GetFromDictionary(Type first, Type second)
         {
             if (conditionalEvents.ContainsKey(first))
                 if (conditionalEvents[first].ContainsKey(second))
                     return conditionalEvents[first][second];
-            return null;
+            return new List<ConditionalEventWrapper>();
         }
 
         public void MoveCameraView(Point vector)
@@ -130,11 +131,6 @@ namespace Aubergine
         }
 
     }
-    /*
-    public interface Action<in T1, in T2>
-    {
-
-    }*/
 }
 
 /*

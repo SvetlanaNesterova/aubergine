@@ -12,8 +12,8 @@ namespace Aubergine
     public abstract class ParametrizedGameObject : GameObject
     {
         private Dictionary<Type, object> parameters;
-        internal Dictionary<Type, ConditionalEventWrapper> ConditionalEvents = 
-            new Dictionary<Type, ConditionalEventWrapper>();
+        internal Dictionary<Type, List<ConditionalEventWrapper>> ConditionalEvents =
+            new Dictionary<Type, List<ConditionalEventWrapper>>();
 
         public TValue Get<TValue, TName>()
             where TName : Parameter<TValue>
@@ -26,7 +26,7 @@ namespace Aubergine
             else
                 throw new Exception($"IParameter {name.Name} (FullName: {name.FullName}) was not found.");
         }
-        
+
         public void Set<TValue, TName>(TValue value)
             where TName : Parameter<TValue>
             where TValue : IComparable
@@ -42,25 +42,26 @@ namespace Aubergine
         }
     }
 
-    public abstract class Parameter<T> where T: IComparable
+    public abstract class Parameter<T> where T : IComparable
     {
         public T Value { get; set; }
         public T Min { get; set; }
         public T Max { get; set; }
     }
 
-    public class ParametrizedCharacter<TCharacter> 
-        where TCharacter : ParametrizedGameObject , new()
+    public class ParametrizedCharacter<TCharacter>
+        where TCharacter : ParametrizedGameObject, new()
     {
         internal Dictionary<Type, object> parameters { get; } = new Dictionary<Type, object>();
-        private Dictionary<Type, ConditionalEventWrapper> collideInteractions = new Dictionary<Type, ConditionalEventWrapper>();
+        private Dictionary<Type, List<ConditionalEventWrapper>> conditionalEvents =
+            new Dictionary<Type, List<ConditionalEventWrapper>>();
 
         public ParametrizedCharacter<TCharacter> WithParameter<TValue, TName>(
             TValue current, TValue min, TValue max)
             where TName : Parameter<TValue>, new()
             where TValue : IComparable
         {
-            Func<TName> parameterCreator = () => new TName() {Value = current, Min = min, Max = max};
+            Func<TName> parameterCreator = () => new TName() { Value = current, Min = min, Max = max };
             // может бфть ошибка
             parameters[typeof(TName)] = parameterCreator;
             return this;
@@ -68,9 +69,9 @@ namespace Aubergine
 
         public TCharacter CreateOnPosition(Position position)
         {
-            var obj = new TCharacter {Position = position, ConditionalEvents = collideInteractions};
+            var obj = new TCharacter { Position = position, ConditionalEvents = conditionalEvents };
             var d = new Dictionary<Type, object>();
-            
+
             foreach (var parameter in parameters)
             {
                 d[parameter.Key] = ((Func<object>)parameter.Value)();
@@ -82,20 +83,20 @@ namespace Aubergine
         public ParametrizedCharacter<TCharacter> AddCollideInteraction<T>(Action<TCharacter, T> action)
             where T : ParametrizedGameObject
         {
-            collideInteractions[typeof(T)] = ConditionalEventWrapper.CreateWrapper(
-                new SimpleCollideInteraction<TCharacter, T>(action));
+            if (!conditionalEvents.ContainsKey(typeof(T)))
+                conditionalEvents[typeof(T)] = new List<ConditionalEventWrapper>();
+            conditionalEvents[typeof(T)].Add(ConditionalEventWrapper.CreateWrapper(
+                new SimpleCollideInteraction<TCharacter, T>(action)));
             return this;
         }
     }
 
     public static class GameObjectFactory
     {
-        public static ParametrizedCharacter<T> GetParametrizedCharacter<T>() 
+        public static ParametrizedCharacter<T> GetParametrizedCharacter<T>()
             where T : ParametrizedGameObject, new()
         {
             return new ParametrizedCharacter<T>();
         }
     }
-
-    
 }

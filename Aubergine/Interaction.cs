@@ -23,6 +23,17 @@ namespace Aubergine
         bool ShouldHappenNow(TObject1 subject, TObject2 obj);
     }
 
+    public static class IConditionalEventExtension
+    {
+        public static ConditionalEventWrapper Wrap<TObject1, TObject2>(this IConditionalEvent<TObject1, TObject2> item)
+            where TObject1 : GameObject
+            where TObject2 : GameObject
+        {
+            return ConditionalEventWrapper.CreateWrapper(item);
+        }
+
+    }
+
     public class ConditionalEventWrapper
     {
         public static ConditionalEventWrapper CreateWrapper<T1, T2>(
@@ -36,15 +47,15 @@ namespace Aubergine
 
         Func<GameObject, GameObject, bool> shouldHappen;
         Action<GameObject, GameObject> happen;
-        private Type firstArgType;
-        private Type secondArgType;
+        public Type FirstArgType { get; }
+        public Type SecondArgType { get; }
 
         private ConditionalEventWrapper() { }
 
         private ConditionalEventWrapper(object iConditional, Type firstType, Type secondType)
         {
-            firstArgType = firstType;
-            secondArgType = secondType;
+            FirstArgType = firstType;
+            SecondArgType = secondType;
             var type = iConditional.GetType();
 
             var happenMethod = type.GetMethod("Happen");
@@ -62,14 +73,14 @@ namespace Aubergine
 
         private void ValidateArgsTypes(GameObject first, GameObject second)
         {
-            if (firstArgType != first.GetType())
+            if (FirstArgType != first.GetType())
                 throw new ArgumentException(
                     $"Incorrect argument type {first.GetType()} for 'first'. " +
-                    $"Expected {firstArgType}.");
-            if (secondArgType != second.GetType())
+                    $"Expected {FirstArgType}.");
+            if (SecondArgType != second.GetType())
                 throw new ArgumentException(
                     $"Incorrect argument type {second.GetType()} for 'second'. " +
-                    $"Expected {secondArgType}.");
+                    $"Expected {SecondArgType}.");
         }
 
         public void Happen(GameObject first, GameObject second)
