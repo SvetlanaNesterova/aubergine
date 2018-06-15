@@ -30,10 +30,10 @@ namespace Game
             var a = GameObjectFactory
                 .GetParametrizedCharacter<Worm>()
                 .WithParameter<int, NutritionalValue>(10, 1, 1)
-                .If(worm => !worm.IsDead).Then(worm => worm.Die())
                 .CreateOnPosition(new Position(new Point(100, 100), new Size(20, 20)));
-
+            
             world = new World(new GameObject[] {c, a});
+
             player = c;
 
             #region ideas
@@ -105,9 +105,9 @@ namespace Game
             return player;
         }
 
-        public void MoveCameraView(Direction direction, int distance)
+        public IEnumerable<GameObject> GetGameObjectsInRectangle(Rectangle rectangle)
         {
-            world.MoveCameraView(direction, distance);
+            return world.GetObjectsInRectangle(rectangle);
         }
     }
 

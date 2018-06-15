@@ -10,9 +10,9 @@ namespace Game
     class MyForm : Form
     {
         private static string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "image");
-        private static Image playerLImg = Image.FromFile(Path.Combine(path, "playerL.png"));
-        private static Image playerRImg = Image.FromFile(Path.Combine(path, "playerR.png"));
-        private static Image wormImg = Image.FromFile(Path.Combine(path, "worm.png"));
+        private static Image playerLImg = Image.FromFile(Path.Combine(path, "black.png"));
+        private static Image playerRImg = Image.FromFile(Path.Combine(path, "black.png"));
+        private static Image wormImg = Image.FromFile(Path.Combine(path, "pink.png"));
         private static Image defaultImg = Image.FromFile(Path.Combine(path, "default.png"));
 
         private Image playerImg = playerLImg;
@@ -33,19 +33,33 @@ namespace Game
 
             PaintEventHandler drawingField = (sender, args) =>
             {
-                foreach (var obj in game.Objects)
-               {
-                    var img = defaultImg;
+                var frameSize = 15;
+                var player = game.GetPlayer();
+                var playerCoordsOnScreen = new Point(
+                    ClientSize.Width / 2 - player.Position.Size.Width / 2,
+                    ClientSize.Height / 2 - player.Position.Size.Height / 2);
 
-                    if (obj is Player)
-                        img = playerImg;
+                args.Graphics.DrawImage(playerImg, playerCoordsOnScreen.X-frameSize, playerCoordsOnScreen.Y-frameSize,
+                    player.Position.Size.Width+frameSize*2, player.Position.Size.Height+frameSize*2);
+
+                var screenCoords = Point.Subtract(player.Position.Coords, new Size(playerCoordsOnScreen));
+                var objInRegion = game.GetGameObjectsInRectangle(new Rectangle(screenCoords, ClientSize));
+
+                foreach (var obj in objInRegion)
+                {
+                    var img = defaultImg;
+                   
+                    if (obj is Player) continue;
+
                     if (obj is Worm)
                         img = wormImg;
+                    
+                    var objCoordsOnScreen = Point.Subtract(obj.Position.Coords, new Size(screenCoords));
 
-                   args.Graphics.DrawImage(img, 
-                       obj.Position.Coords.X - 30, obj.Position.Coords.Y - 30,
-                       obj.Position.Size.Width + 30, obj.Position.Size.Height + 30); //obj.Position.Body);
-               }
+                    args.Graphics.DrawImage(img,
+                        objCoordsOnScreen.X - frameSize, objCoordsOnScreen.Y - frameSize,
+                        obj.Position.Size.Width + frameSize*2, obj.Position.Size.Height + frameSize*2); 
+                }
             };
 
             Paint += drawingField;
@@ -69,33 +83,29 @@ namespace Game
         {
             var player = game.GetPlayer();
             var direction = Direction.None;
-            var distance = 5;
+            var distance = 2;
             
             if (isUp)
             {
                 direction = Direction.Down;
                 player.MoveInDirection(direction, distance);
-                game.MoveCameraView(direction, -distance);
             }
             if (isDown)
             {
                 direction = Direction.Up;
                 player.MoveInDirection(direction, distance);
-                game.MoveCameraView(direction, -distance);
             }
             if (isL)
             {
                 playerImg = playerLImg;
                 direction = Direction.Left;
                 player.MoveInDirection(direction, distance);
-                game.MoveCameraView(direction, -distance);
             }
             if (isR)
             {
                 playerImg = playerRImg;
                 direction = Direction.Right;
                 player.MoveInDirection(direction, distance);
-                game.MoveCameraView(direction, -distance);
             }
         }
 

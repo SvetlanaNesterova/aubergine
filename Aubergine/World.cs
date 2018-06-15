@@ -114,20 +114,11 @@ namespace Aubergine
             return new List<ConditionalEventWrapper>();
         }
 
-        public void MoveCameraView(Point vector)
+        public IEnumerable<GameObject> GetObjectsInRectangle(Rectangle region)
         {
-            MoveCameraView(Direction.Right, vector.X);
-            MoveCameraView(Direction.Up, vector.Y);
+            return objects
+                .Where(obj => region.IntersectsWith(obj.Position.Body));
         }
-
-        public void MoveCameraView(Direction direction, int distance)
-        {
-            foreach (var obj in objects)
-            {
-                obj.Position.MoveDirection(direction, distance);
-            }
-        }
-
     }
 }
 
