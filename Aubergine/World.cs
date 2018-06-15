@@ -27,15 +27,14 @@ namespace Aubergine
         {
             Physics = physics;
             Physics.AddWorld(this);
+            Position.AddPhysics(physics);
 
             this.Objects = objects.ToImmutableList();
             var enumerable = objects
                 .OfType<ParametrizedGameObject>();
             foreach (var obj in enumerable)
                 AddParametrizedObject(obj);
-            foreach (var obj in Objects.Where(o => o is IMovingObject))
-                InjectPhysics(obj);
-
+             
             foreach (var action in conditionalEvents)
             {
                 AddToDictionary(action.FirstArgType, action.SecondArgType, action);
@@ -66,28 +65,30 @@ namespace Aubergine
             // проверить все пересечения, произвести действия
             Objects = Objects.Where(obj => obj.IsOnMap).ToImmutableList();
         }
-
-        private void InjectPhysics(GameObject obj)
+        
+        /*private void InjectPhysics(GameObject obj)
         {
             var movable = obj as IMovingObject;
             if (movable == null)
                 return;
-            InjectPhysics(obj.GetType());
-        }
-
-        private void InjectPhysics(Type type)
-        {
-            //var method =
-        }
+            var type = obj.GetType();
+            var old = type.GetMethod("MoveOnVector");
+            type.
+            Func<Point, bool> newM = (vector) =>
+            {
+                if (Physics.MoveOnVector(obj, vector))
+                    return ((IMovingObject)obj).MoveOnVector(vector);
+                return false;
+            };
+            Injector.Inject(type, old, newM.Method);
+        }*/
         
-            public bool AddObject(GameObject obj)
+        public bool AddObject(GameObject obj)
         {
             // if не помещается на карте - return false;
             Objects = Objects.Add(obj);
             if (obj is ParametrizedGameObject)
                 AddParametrizedObject((ParametrizedGameObject)obj);
-            if (obj is IMovingObject)
-                InjectPhysics(obj);
             return true;
         }
 

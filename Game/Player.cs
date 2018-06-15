@@ -8,7 +8,7 @@ using Aubergine;
 
 namespace Game
 {
-    class Player : ParametrizedGameObject, IMovingObject
+    class Player : ParametrizedGameObject
     {
         public Player()
         { }

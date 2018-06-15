@@ -105,7 +105,7 @@ namespace Aubergine
 
         public virtual bool ShouldHappenNow(TObject1 subject, TObject2 obj)
         {
-            return subject.Position.IsIntersectedWith(obj.Position);
+            return subject.Position.IsTouchedWith(obj.Position);
         }
     }
 

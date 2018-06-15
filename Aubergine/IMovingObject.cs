@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Aubergine
 {
-    public interface IMovingObject
+    public interface IMovingObject<T> where T: Physics
     {
         bool MoveOnVector(Point vector);
 

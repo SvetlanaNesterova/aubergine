@@ -11,7 +11,7 @@ namespace Aubergine
     {
         public abstract void AddWorld(World world);
 
-        public abstract bool MoveOnVector(GameObject obj, Point vector);
+        public abstract bool AllowMoveOnVector(Position obj, Point vector);
     }
 
     public class ForWaysUnpermeablePhysics : Physics
@@ -20,21 +20,18 @@ namespace Aubergine
 
         public override void AddWorld(World world) => this.world = world;
 
-        public override bool MoveOnVector(GameObject obj, Point vector)
+        public override bool AllowMoveOnVector(Position position, Point vector)
         {
-            Console.WriteLine("Physics exsists for " + obj.ToString());
-            if (obj.IsPermeable)
+            if (position.IsPermeable)
                 return true;
-           
-            var newPosition = new Position(
-                Point.Add(obj.Position.Coords, new Size(vector)),
-                obj.Position.Size);
-            foreach (var otherObj in world.Objects.Where(o => o.IsPermeable))
-            {
-                if (otherObj.Position.IsIntersectedWith(obj.Position))
-                    return false;
-            }
-            return true;
+
+            var newPoint = Point.Add(position.Coords, new Size(vector));
+            var newPosition = new Position(newPoint, position.Size);
+
+            return world.Objects
+                .Select(o => o.Position)
+                .Where(p => !p.IsPermeable && p != position)
+                .All(other => !other.IsIntersectedWith(newPosition));
         }
     }
 }

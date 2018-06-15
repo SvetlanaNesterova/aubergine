@@ -11,6 +11,7 @@ namespace Game
 {
     class Game
     {
+        public class Stone : ParametrizedGameObject { }
         private World world;
         private Player player;
         public ImmutableList<GameObject> Objects => world.Objects;
@@ -33,9 +34,15 @@ namespace Game
                 .If(worm => !worm.IsDead).Then(worm => { })
                 .CreateOnPosition(new Position(new Point(100, 100), new Size(20, 20)));
 
+
+            var stone = GameObjectFactory
+                .GetParametrizedCharacter<Stone>()
+                .CreateOnPosition(new Position(new Point(0, 0), new Size(50, 50)));
+
+
             world = new World(
                 new ForWaysUnpermeablePhysics(),
-                new GameObject[] {c, a});
+                new GameObject[] {c, a, stone });
             player = c;
 
             #region ideas
