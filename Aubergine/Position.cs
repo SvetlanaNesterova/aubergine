@@ -23,27 +23,7 @@ namespace Aubergine
         {
             return Body.IntersectsWith(other.Body);
         }
-
-        internal void MoveUp(int distance)
-        {
-            Coords.Offset(0, distance);
-        }
-
-        internal void MoveDown(int distance)
-        {
-            Coords.Offset(0, -distance);
-        }
-
-        internal void MoveRight(int distance)
-        {
-            Coords.Offset(distance, 0);
-        }
-
-        internal void MoveLeft(int distance)
-        {
-            Coords.Offset(-distance, 0);
-        }
-
+        
         public void MoveDirection(Direction direction, int distance)
         {
             var vector = direction.ToVector();

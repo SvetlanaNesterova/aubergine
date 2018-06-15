@@ -79,15 +79,53 @@ namespace Aubergine
             obj.SetParameters(d);
             return obj;
         }
-
+        
         public ParametrizedCharacter<TCharacter> AddCollideInteraction<T>(Action<TCharacter, T> action)
             where T : ParametrizedGameObject
         {
             if (!conditionalEvents.ContainsKey(typeof(T)))
                 conditionalEvents[typeof(T)] = new List<ConditionalEventWrapper>();
             conditionalEvents[typeof(T)].Add(ConditionalEventWrapper.CreateWrapper(
-                new SimpleCollideInteraction<TCharacter, T>(action)));
+                new SimpleCollideInteraction<TCharacter, T>((a, b) =>
+                {
+                    if (a != b) action(a, b);
+                })));
             return this;
+        }
+
+        public ConditionalEventCreator If(Func<TCharacter, bool> condition)
+        {
+            return new ConditionalEventCreator(condition, this);
+        }
+
+        public class ConditionalEventCreator
+        {
+            private Func<TCharacter, bool> condition;
+            private readonly ParametrizedCharacter<TCharacter> parametrizedCharacter;
+
+
+            public ConditionalEventCreator(Func<TCharacter, bool> c, ParametrizedCharacter<TCharacter> paramCharacter)
+            {
+                condition = c;
+                parametrizedCharacter = paramCharacter;
+            }
+
+            public ParametrizedCharacter<TCharacter> Then(Action<TCharacter> action)
+            {
+                var cond = new SimpleConditionalEvent<TCharacter, TCharacter>(
+                    (firstObj, secondObj) => firstObj == secondObj && condition(firstObj),
+                    (firstObj, secondObj) =>
+                    {
+                        if (firstObj == secondObj)
+                            action(firstObj);
+                    });
+
+                if (!parametrizedCharacter.conditionalEvents.ContainsKey(typeof(TCharacter)))
+                    parametrizedCharacter.conditionalEvents[typeof(TCharacter)] = new List<ConditionalEventWrapper>();
+
+                parametrizedCharacter.conditionalEvents[typeof(TCharacter)].Add(cond.Wrap());
+                return parametrizedCharacter;
+            }
         }
     }
 

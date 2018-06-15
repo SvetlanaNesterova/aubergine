@@ -123,7 +123,32 @@ namespace Aubergine
 
         public override void Happen(TObject1 subject, TObject2 obj)
         {
-            action.Invoke(subject, obj);
+            action(subject, obj);
+        }
+    }
+
+    class SimpleConditionalEvent<TObject1, TObject2> : IConditionalEvent<TObject1, TObject2>
+        where TObject1 : GameObject
+        where TObject2 : GameObject
+    {
+        private Func<TObject1, TObject2, bool> conditional;
+        private Action<TObject1, TObject2> action;
+
+        public SimpleConditionalEvent(
+            Func<TObject1, TObject2, bool> conditional, Action<TObject1, TObject2> action)
+        {
+            this.conditional = conditional;
+            this.action = action;
+        }
+
+        public void Happen(TObject1 subject, TObject2 obj)
+        {
+            action(subject, obj);
+        }
+
+        public bool ShouldHappenNow(TObject1 subject, TObject2 obj)
+        {
+            return conditional(subject, obj);
         }
     }
 }
