@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Immutable;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Aubergine
 {
@@ -42,11 +43,33 @@ namespace Aubergine
 
         }
 
-        public World(Physics physics, GameObject[] objects,
-            CollideInteraction<GameObject, GameObject>[] collideInteractions,
-            IInteraction<GameObject, GameObject>[] interactions)
+        public void CollectConditionalEventsAutomatically(Assembly targetAssembly)
         {
+            var magicName = "IConditionalEvent`2";
+            var condEventsRealisations = CollectTypesWithInterface(targetAssembly, magicName);
 
+            foreach (var type in condEventsRealisations)
+            {
+                object instance = type
+                    .GetConstructor(new Type[] { })
+                    .Invoke(new Type[] { });
+
+                var argTypes = type.GetInterfaces()
+                    .First(interface_ => interface_.Name == magicName)
+                    .GetGenericArguments();
+                Type first = argTypes[0];
+                Type second = argTypes[1];
+
+                AddToDictionary(first, second, 
+                    new ConditionalEventWrapper(instance, first, second));
+            }
+        }
+
+        private IEnumerable<Type> CollectTypesWithInterface(Assembly assembly, string interfaceName)
+        {
+            return assembly.GetTypes()
+                .Where(type => type.GetInterfaces()
+                    .Any(interface_ => interface_.Name == interfaceName));
         }
 
         public void Tick()
@@ -65,23 +88,6 @@ namespace Aubergine
             // проверить все пересечения, произвести действия
             Objects = Objects.Where(obj => obj.IsOnMap).ToImmutableList();
         }
-        
-        /*private void InjectPhysics(GameObject obj)
-        {
-            var movable = obj as IMovingObject;
-            if (movable == null)
-                return;
-            var type = obj.GetType();
-            var old = type.GetMethod("MoveOnVector");
-            type.
-            Func<Point, bool> newM = (vector) =>
-            {
-                if (Physics.MoveOnVector(obj, vector))
-                    return ((IMovingObject)obj).MoveOnVector(vector);
-                return false;
-            };
-            Injector.Inject(type, old, newM.Method);
-        }*/
         
         public bool AddObject(GameObject obj)
         {
@@ -105,6 +111,7 @@ namespace Aubergine
         {
             AddToDictionary(typeof(TFirst), typeof(TSecond), ConditionalEventWrapper.CreateWrapper(action));
         }
+
 
         public void AddCollideInteraction<TFirst, TSecond>(CollideInteraction<TFirst, TSecond> action)
             where TFirst : GameObject

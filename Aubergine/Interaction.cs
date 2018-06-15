@@ -14,7 +14,7 @@ namespace Aubergine
         void Do(TSubject subject, TObject obj);
         bool IsAvailiable(TSubject subject, TObject obj);
     }
-
+    
     public interface IConditionalEvent<in TObject1, in TObject2>
        where TObject1 : GameObject
        where TObject2 : GameObject
@@ -52,7 +52,7 @@ namespace Aubergine
 
         private ConditionalEventWrapper() { }
 
-        private ConditionalEventWrapper(object iConditional, Type firstType, Type secondType)
+        internal ConditionalEventWrapper(object iConditional, Type firstType, Type secondType)
         {
             FirstArgType = firstType;
             SecondArgType = secondType;

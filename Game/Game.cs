@@ -42,7 +42,7 @@ namespace Game
 
 
             world = new World(
-                new ForWaysUnpermeablePhysics(),
+                new FourWaysPhysics(),
                 new GameObject[] {c, a, stone });
             player = c;
 
