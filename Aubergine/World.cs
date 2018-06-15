@@ -159,6 +159,11 @@ namespace Aubergine
             foreach (var obj in Objects)
                 obj.Position.MoveDirection(direction, distance);
         }
+
+        public IEnumerable<GameObject> GetObjectsInRectangle(Rectangle rectangle)
+        {
+            return Objects.Where(obj => rectangle.IntersectsWith(obj.Position.Body));
+        }
     }
 }
 

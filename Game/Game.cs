@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Drawing;
@@ -113,10 +114,10 @@ namespace Game
         {
             return player;
         }
-
-        public void MoveCameraView(Direction direction, int distance)
+        
+        public IEnumerable<GameObject> GetGameObjectsInRectangle(Rectangle rectangle)
         {
-            world.MoveCameraView(direction, distance);
+            return world.GetObjectsInRectangle(rectangle);
         }
     }
 
