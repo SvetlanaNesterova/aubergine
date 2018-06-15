@@ -19,8 +19,8 @@ namespace Aubergine
        where TObject1 : GameObject
        where TObject2 : GameObject
     {
-        void Happen(TObject1 subject, TObject2 obj);
-        bool ShouldHappenNow(TObject1 subject, TObject2 obj);
+        void Happen(TObject1 object1, TObject2 object2);
+        bool ShouldHappenNow(TObject1 object1, TObject2 object2);
     }
 
     public static class IConditionalEventExtension
@@ -103,7 +103,7 @@ namespace Aubergine
     {
         public abstract void Happen(TObject1 subject, TObject2 obj);
 
-        public bool ShouldHappenNow(TObject1 subject, TObject2 obj)
+        public virtual bool ShouldHappenNow(TObject1 subject, TObject2 obj)
         {
             return subject.Position.IsIntersectedWith(obj.Position);
         }
