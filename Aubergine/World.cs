@@ -46,7 +46,8 @@ namespace Aubergine
         public void CollectConditionalEventsAutomatically(Assembly targetAssembly)
         {
             var magicName = "IConditionalEvent`2";
-            var condEventsRealisations = CollectTypesWithInterface(targetAssembly, magicName);
+            var condEventsRealisations = CollectTypesWithInterface(
+                targetAssembly, magicName);
 
             foreach (var type in condEventsRealisations)
             {
@@ -111,7 +112,6 @@ namespace Aubergine
         {
             AddToDictionary(typeof(TFirst), typeof(TSecond), ConditionalEventWrapper.CreateWrapper(action));
         }
-
 
         public void AddCollideInteraction<TFirst, TSecond>(CollideInteraction<TFirst, TSecond> action)
             where TFirst : GameObject

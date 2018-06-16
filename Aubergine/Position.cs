@@ -10,11 +10,7 @@ namespace Aubergine
     public class Position
     {
         public static Physics Physics { get; private set; }
-        public static void AddPhysics(Physics physics)
-        {
-            // if (Physics != null)
-            Physics = physics;
-        }
+        public static void AddPhysics(Physics physics) => Physics = physics;
 
         public Point Coords { get; private set; }
         public Size Size { get; private set; }

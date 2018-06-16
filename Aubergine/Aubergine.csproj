@@ -54,9 +54,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CollideInteraction.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="GameObjectFactory.cs" />
-    <Compile Include="Interaction.cs" />
+    <Compile Include="IConditionalEvent.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="IMovingObject.cs" />
     <Compile Include="Physics.cs" />
