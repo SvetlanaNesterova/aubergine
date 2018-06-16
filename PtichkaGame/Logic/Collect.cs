@@ -16,8 +16,8 @@ namespace PtichkaGame.Logic
         
         public bool ShouldHappenNow(BirdPlayer bird, Bush bush)
         {
-            //return bird.WantToCollect == bush && bush.BerriesCount > 0;
-            return bird.Position.IsTouchedWith(bush.Position) && bush.BerriesCount > 0;
+            return bird.Position.IsTouchedWith(bush.Position) 
+                && bush.BerriesCount > 0;
         }
     }
 }

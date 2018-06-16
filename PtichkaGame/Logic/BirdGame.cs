@@ -29,7 +29,7 @@ namespace PtichkaGame.Logic
                 new Bush(new Position(new Point(400, 500), new Size(10, 10)))
             };
 
-            world = new World(new FourWaysPhysics(), objects);
+            world = new World(new FourWays(), objects);
             world.AddIConditionalEvent(new Collect());
         }
 
@@ -37,7 +37,7 @@ namespace PtichkaGame.Logic
         {
             var container = new StandardKernel();
 
-            container.Bind<Physics>().To<FourWaysPhysics>();
+            container.Bind<Physics>().To<FourWays>();
             container.Bind<GameObject>().To<BirdPlayer>().InSingletonScope();
             container.Bind<GameObject>().To<Bush>();
 
@@ -48,34 +48,31 @@ namespace PtichkaGame.Logic
                 .ToConstant(new Position(new Point(10, 10), new Size(50, 50)))
                 .WhenInjectedInto<Bush>();
 
-            container.Bind(syntax => 
-                syntax.FromThisAssembly()
-                .IncludingNonPublicTypes()
-                .SelectAllTypes()
-                .BindAllInterfaces());
+            // Код, который требуется повторить для всех 
+            // IConditionalEvent<T1, T2> where T1, T2 : GameObject:
 
-            // Код, который требуется повторить
-            //world.AddIConditionalEvent(new Collect());
+            //  world.AddIConditionalEvent(new Collect());
 
             // Не работает из-за отсутствия ковариантности:
-            //container.Bind<IConditionalEvent<GameObject, GameObject>>().To<Collect>();
-            //container.Bind<World>().ToSelf()
-            //    .OnActivation(w =>
-            //    {
-            //        foreach (var c in container.GetAll<IConditionalEvent<GameObject, GameObject>>())
-            //            w.AddIConditionalEvent(c);
-            //    });
-
+            /*container.Bind<IConditionalEvent<GameObject, GameObject>>().To<Collect>();
+            container.Bind<World>().ToSelf()
+                .OnActivation(w =>
+                {
+                    foreach (var c in container
+                        .GetAll<IConditionalEvent<GameObject, GameObject>>())
+                            w.AddIConditionalEvent(c);
+                });
+            */
             // Единственный способ повторить автоматически - но он ничего не сокращает
-            /*
+            
             container.Bind<IConditionalEvent<BirdPlayer, Bush>>().To<Collect>();
             container.Bind<World>().ToSelf()
                 .OnActivation(w =>
                 {
-                    foreach (var c in container.GetAll<IConditionalEvent<BirdPlayer, Bush>>())
-                        w.AddIConditionalEvent(c);
+                    foreach (var c in container
+                        .GetAll<IConditionalEvent<BirdPlayer, Bush>>())
+                            w.AddIConditionalEvent(c);
                 });
-            */
 
             world = container.Get<World>();
             player = container.Get<BirdPlayer>();

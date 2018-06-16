@@ -10,19 +10,14 @@ namespace PtichkaGame.Logic
 {
     public class BirdPlayer : GameObject
     {
-        static int a = 0;
-        static List<BirdPlayer> pl = new List<BirdPlayer>();
-
-        public BirdPlayer(Position position) : base(position)
-        {
-            a++;
-            pl.Add(this);
-        }
+        public BirdPlayer(Position position) : base(position) { }
 
         public void MoveInDirection(Direction direction, int distance)
         {
             var vector = direction.ToVector();
-            var newPoint = new Point(vector.X * distance, vector.Y * distance);
+            var newPoint = new Point(
+                vector.X * distance, 
+                vector.Y * distance);
             Position.TryMoveOn(newPoint);
         }
     }

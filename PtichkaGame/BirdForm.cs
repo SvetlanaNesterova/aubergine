@@ -13,7 +13,8 @@ namespace PtichkaGame
         private static Image playerLImg = Image.FromFile(Path.Combine(path, "birdL.png"));
         private static Image playerFaceImg = Image.FromFile(Path.Combine(path, "bird.png"));
         private static Image playerRImg = Image.FromFile(Path.Combine(path, "birdR.png"));
-        private static Image bushImg = Image.FromFile(Path.Combine(path, "pink.png"));
+        private static Image bushImg = Image.FromFile(Path.Combine(path, "bush.png"));
+        private static Image emptyBushImg = Image.FromFile(Path.Combine(path, "bushEmpty.png"));
         private static Image defaultImg = Image.FromFile(Path.Combine(path, "default.png"));
 
         private Image playerImg = playerFaceImg;
@@ -27,7 +28,7 @@ namespace PtichkaGame
         {
             DoubleBuffered = true;
             ClientSize = new Size(1000, 500);
-            BackColor = Color.Aqua;
+            BackColor = Color.DarkOliveGreen;
             //BackgroundImage = Image.FromFile(Path.Combine(path, "water.png"));
 
             var game = new Game();
@@ -53,7 +54,13 @@ namespace PtichkaGame
                     if (obj is BirdPlayer) continue;
 
                     if (obj is Bush)
-                        img = bushImg;
+                    {
+                        var bush = obj as Bush;
+                        if (bush.BerriesCount == 0)
+                            img = emptyBushImg; 
+                        else
+                            img = bushImg;
+                    }
 
                     var objCoordsOnScreen = Point.Subtract(obj.Position.Coords, new Size(screenCoords));
 
